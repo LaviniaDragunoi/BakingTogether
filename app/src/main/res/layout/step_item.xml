@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        tools:text="Step name"
+        android:clickable="false"
+        android:id="@+id/step_radio_button"/>
+ <TextView
+     android:layout_height="0dp"
+     android:layout_weight="4"
+     android:layout_width="wrap_content"
+     android:textSize="14sp"
+     android:layout_margin="8dp"
+tools:text="StepDescription"/>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1">
+    <android.support.design.widget.FloatingActionButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_arrow_previous"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="15dp"
+        app:rippleColor="@color/colorPrimary"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        android:src="@drawable/ic_arrow_next"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="15dp"
+        tools:ignore="RelativeOverlap" />
+</RelativeLayout>
+</LinearLayout>
