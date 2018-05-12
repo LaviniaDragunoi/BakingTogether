@@ -11,10 +11,10 @@ public class ApiClient {
 
     private static Retrofit retrofit = null;
 
-    public static Retrofit getClient(){
+    public static Retrofit getClient(String baseUrl){
         if(retrofit == null){
             retrofit = new Retrofit.Builder()
-                    .baseUrl("http://go.udacity.com/")
+                    .baseUrl(baseUrl)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
         }

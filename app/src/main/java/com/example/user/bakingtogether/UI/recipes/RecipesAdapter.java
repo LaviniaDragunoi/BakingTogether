@@ -57,7 +57,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, StepDetailsActivity.class);
-                intent.putExtra("Recipe", (Serializable) recipeResponse);
+                intent.putExtra("Recipe", recipeResponse);
                 context.startActivity(intent);
             }
         });
@@ -79,21 +79,6 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
         }
     }
 
-    /**
-     * This method adds new objects to the listVew
-     */
-    public void addAll(List<RecipeResponse> recipesList) {
-        this.recipesList.clear();
-        this.recipesList.addAll(recipesList);
-        notifyDataSetChanged();
-    }
 
-    /**
-     * This method clear the news list
-     */
-    public void clearAll() {
-        this.recipesList.clear();
-        notifyDataSetChanged();
-    }
 
 }
