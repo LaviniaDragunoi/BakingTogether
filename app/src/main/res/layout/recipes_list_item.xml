@@ -3,18 +3,20 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical">
+    android:orientation="horizontal"
+    android:padding="16dp"
+    android:layout_gravity="center">
     <ImageView
         android:id="@+id/recipe_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         tools:src="@drawable/ic_logo">
     </ImageView>
     <TextView
         android:id="@+id/recipe_name"
-        android:layout_gravity="center"
+        android:layout_gravity="center_vertical"
         android:textSize="20sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

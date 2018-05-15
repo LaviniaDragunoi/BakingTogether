@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Created by Lavinia Dragunoi on 7-05-2018
  */
-public class Steps implements Parcelable {
+public class Step implements Parcelable {
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -26,7 +26,7 @@ public class Steps implements Parcelable {
     @Expose
     private String thumbnailURL;
 
-    protected Steps(Parcel in) {
+    protected Step(Parcel in) {
         if (in.readByte() == 0) {
             id = null;
         } else {
@@ -38,15 +38,15 @@ public class Steps implements Parcelable {
         thumbnailURL = in.readString();
     }
 
-    public static final Creator<Steps> CREATOR = new Creator<Steps>() {
+    public static final Creator<Step> CREATOR = new Creator<Step>() {
         @Override
-        public Steps createFromParcel(Parcel in) {
-            return new Steps(in);
+        public Step createFromParcel(Parcel in) {
+            return new Step(in);
         }
 
         @Override
-        public Steps[] newArray(int size) {
-            return new Steps[size];
+        public Step[] newArray(int size) {
+            return new Step[size];
         }
     };
 

@@ -1,5 +1,6 @@
 package com.example.user.bakingtogether.UI.recipes;
 
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.data.ApiClient;
@@ -32,9 +34,11 @@ public class RecipesFragment extends Fragment {
 
     @BindView(R.id.recipes_recycler_view) RecyclerView recipesRW;
     @BindView(R.id.recipes_progress_bar) ProgressBar recipesPB;
-    private Unbinder unbinder;
+    @BindView(R.id.error_loading_recipes)
+    TextView errorMessage;
     private RecipesAdapter recipesAdapter;
     private Retrofit retrofit;
+    private Context mContext;
 
     public RecipesFragment(){
 
@@ -43,19 +47,30 @@ public class RecipesFragment extends Fragment {
     @Override
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
         View rootView = inflater.inflate(R.layout.fragment_recipes_main, container, false);
-        unbinder = ButterKnife.bind(this, rootView);
-        RecyclerView.LayoutManager layoutManager;
-        RecipeApiInterface apiService = ApiUtils.getRecipeInterfaceResponse();
-        if((getResources().getConfiguration().screenLayout &
-                Configuration.SCREENLAYOUT_SIZE_MASK) == Configuration.SCREENLAYOUT_SIZE_LARGE) {
-             layoutManager = new GridLayoutManager(recipesRW.getContext(),2);
-        }else {
+        ButterKnife.bind(this, rootView);
 
-            layoutManager = new GridLayoutManager(recipesRW.getContext(),1);
-        }
-        recipesAdapter = new RecipesAdapter(getContext(), new ArrayList<RecipeResponse>());
-        recipesRW.setLayoutManager(layoutManager);
-        recipesRW.setAdapter(recipesAdapter);
+        recipesPB.setVisibility(View.VISIBLE);
+        RecipeApiInterface apiService = ApiUtils.getRecipeInterfaceResponse();
+        Call<List<RecipeResponse>> call = apiService.getRecipeResponse();
+        call.enqueue(new Callback<List<RecipeResponse>>() {
+            @Override
+            public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
+                List<RecipeResponse> recipes = response.body();
+                RecyclerView.LayoutManager layoutManager;
+                layoutManager = new GridLayoutManager(recipesRW.getContext(),1);
+                recipesPB.setVisibility(View.INVISIBLE);
+                recipesRW.setLayoutManager(layoutManager);
+                recipesAdapter = new RecipesAdapter(mContext, recipes);
+                recipesRW.setAdapter(recipesAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
+                recipesPB.setVisibility(View.INVISIBLE);
+                errorMessage.setVisibility(View.VISIBLE);
+
+            }
+        });
         return rootView;
     }
 }

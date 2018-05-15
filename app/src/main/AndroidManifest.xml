@@ -18,7 +18,14 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".UI.StepDetailsActivity"></activity>
+        <activity
+            android:name=".UI.DetailsActivity"
+            android:parentActivityName=".UI.MainActivity">
+            <meta-data
+                android:name="android:suport.PARENT_ACTIVITY"
+                android:value=".UI.MainActivity" />
+        </activity>
+        <activity android:name=".UI.StepActivity"></activity>
     </application>
 
 </manifest>

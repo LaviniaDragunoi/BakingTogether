@@ -23,7 +23,7 @@ public class StepsFragment extends Fragment {
         }
         @Override
         public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
-            View rootView = inflater.inflate(R.layout.steps_fragment, container, false);
+            View rootView = inflater.inflate(R.layout.steps_list_fragment, container, false);
             unbinder = ButterKnife.bind(this, rootView);
             return rootView;
         }

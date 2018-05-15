@@ -8,13 +8,23 @@
 <android.support.v7.widget.RecyclerView
     android:id="@+id/recipes_recycler_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"/>
+    android:layout_height="match_parent" />
 
     <ProgressBar
         android:visibility="gone"
         android:id="@+id/recipes_progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
+    <TextView
+        android:id="@+id/error_loading_recipes"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="No baking today!"
+        android:textSize="20sp"
+        android:drawableBottom="@drawable/ic_local_dining_black_24dp"
+        android:drawablePadding="10dp"
         android:layout_gravity="center"/>
 
 </FrameLayout>

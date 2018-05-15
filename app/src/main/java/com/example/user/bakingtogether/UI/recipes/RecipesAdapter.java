@@ -12,15 +12,15 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.user.bakingtogether.R;
-import com.example.user.bakingtogether.UI.StepDetailsActivity;
+import com.example.user.bakingtogether.UI.DetailsActivity;
 import com.example.user.bakingtogether.models.RecipeResponse;
 import com.squareup.picasso.Picasso;
 
-import java.io.Serializable;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder> {
 
@@ -41,7 +41,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecipesViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final RecipesViewHolder holder, int position) {
         final RecipeResponse recipeResponse = recipesList.get(position);
 
         TextView recipeNameTextView = holder.recipeName;
@@ -51,14 +51,15 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
         String imageString = recipeResponse.getImage();
         if( imageString != null && !imageString.isEmpty()) {
             Picasso.get().load(Uri.parse(imageString)).into(recipeImageView);
+
         }else Picasso.get().load(R.drawable.ic_logo).into(recipeImageView);
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, StepDetailsActivity.class);
+                Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
                 intent.putExtra("Recipe", recipeResponse);
-                context.startActivity(intent);
+                holder.itemView.getContext().startActivity(intent);
             }
         });
     }
@@ -69,13 +70,12 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
     }
 
     public static class RecipesViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.recipe_name)
-        TextView recipeName;
-        @BindView(R.id.recipe_image)
-        ImageView recipeImage;
+        @BindView(R.id.recipe_name) TextView recipeName;
+        @BindView(R.id.recipe_image) ImageView recipeImage;
         public RecipesViewHolder(View itemView) {
             super(itemView);
-            ButterKnife.bind(itemView);
+            ButterKnife.bind(this, itemView);
+
         }
     }
 
