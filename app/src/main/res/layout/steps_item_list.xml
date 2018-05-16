@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingRight="10dp"
+    android:paddingLeft="10dp"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:textColor="@color/colorPrimary"
+        android:textSize="16sp"
+        android:layout_margin="8dp"
+        tools:text="Step name"
+        android:clickable="false"
+        android:padding="10dp"
+        android:id="@+id/step_name_radio_button"/>
+
+</android.support.constraint.ConstraintLayout>
