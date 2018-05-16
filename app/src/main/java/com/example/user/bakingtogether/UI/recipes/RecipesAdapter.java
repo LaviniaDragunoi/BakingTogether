@@ -11,21 +11,31 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.DB.AppRoomDatabase;
+import com.example.user.bakingtogether.DB.IngredientEntity;
+import com.example.user.bakingtogether.DB.RecipeDetails;
+import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.DetailsActivity;
-import com.example.user.bakingtogether.models.RecipeResponse;
+import com.example.user.bakingtogether.adapter.ListsAdapter;
+import com.example.user.bakingtogether.data.Ingredient;
+import com.example.user.bakingtogether.data.RecipeResponse;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static java.lang.String.valueOf;
 
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder> {
 
     private List<RecipeResponse> recipesList;
     private Context context;
+    private AppRoomDatabase mDb;
 
     public RecipesAdapter (Context context, List<RecipeResponse> recipesList){
         this.context = context;

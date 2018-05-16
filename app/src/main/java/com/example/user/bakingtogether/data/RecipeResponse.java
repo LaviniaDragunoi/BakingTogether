@@ -1,4 +1,4 @@
-package com.example.user.bakingtogether.models;
+package com.example.user.bakingtogether.data;
 /**
  * Created by Lavinia Dragunoi on 7-05-2018
  */
@@ -15,7 +15,6 @@ import java.util.List;
 
 public class RecipeResponse implements Parcelable{
 
-    @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -109,6 +108,7 @@ public class RecipeResponse implements Parcelable{
     public void setImage(String image) {
         this.image = image;
     }
+
 
     @Override
     public int describeContents() {

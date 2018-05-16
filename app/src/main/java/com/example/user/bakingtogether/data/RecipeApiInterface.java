@@ -1,7 +1,5 @@
 package com.example.user.bakingtogether.data;
 
-import com.example.user.bakingtogether.models.RecipeResponse;
-
 import java.util.List;
 
 import retrofit2.Call;
