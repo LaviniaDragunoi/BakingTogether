@@ -47,9 +47,9 @@ public class DetailsActivity extends AppCompatActivity {
 
     ListFragment ingredientsFragment =  new ListFragment();
     List<IngredientEntity> ingredientEntityList = roomDB.recipeDao().getIngredientsByRecipeId(currentRecipeId);
-      Log.d(TAG,"Lavinia: " + currentRecipeId + "are: " + ingredientEntityList);
+    List<Object> objectList = ingredientsFragment.convertIngredientListToOrbjectList(ingredientEntityList);
+    ingredientsFragment.bindDataToAdapter(this, objectList);
       FragmentManager fragmentManager = getSupportFragmentManager();
-
         fragmentManager.beginTransaction()
                 .replace(R.id.ingredients_list,ingredientsFragment)
                 .commit();

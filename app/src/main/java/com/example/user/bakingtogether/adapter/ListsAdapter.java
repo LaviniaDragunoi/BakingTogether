@@ -22,9 +22,7 @@ import static java.lang.String.valueOf;
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> objectList;
     private static final int STEP = 0, INGREDIENT = 1;
-    @BindView(R.id.object_list_recycler_view)
-    RecyclerView objectRV;
-    AppRoomDatabase roomDB;
+
 
     public ListsAdapter(List<Object> objectList){
         this.objectList = objectList;
@@ -238,9 +236,6 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    public void bindDataToAdapter(List<Object> objectList) {
-        // Bind adapter to recycler view object
-        objectRV.setAdapter(new ListsAdapter(objectList));
-    }
+
 }
 
