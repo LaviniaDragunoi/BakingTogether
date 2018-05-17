@@ -76,7 +76,7 @@ public class RecipesFragment extends Fragment {
                     List<IngredientEntity> ingredientsListEntity = new ArrayList<>();
                     List<Ingredient> ingredientsList = recipes.get(i).getIngredients();
                     for(int j = 0; j< ingredientsList.size(); j++){
-                        ingredientsListEntity.add(new IngredientEntity((double)(ingredientsList.get(j).getQuantity()),
+                        ingredientsListEntity.add(new IngredientEntity(recipeId,(double)(ingredientsList.get(j).getQuantity()),
                                 ingredientsList.get(j).getMeasure(), ingredientsList.get(j).getIngredient()));
 
                     }
@@ -85,7 +85,7 @@ public class RecipesFragment extends Fragment {
                     List<StepEntity> stepsListEntity = new ArrayList<>();
                     for(int j = 0; j< steps.size(); j++){
 
-                        stepsListEntity.add(new StepEntity(steps.get(j).getId(),
+                        stepsListEntity.add(new StepEntity(steps.get(j).getId(),recipeId,
                                 steps.get(j).getShortDescription(),steps.get(j).getDescription(),
                                 steps.get(j).getVideoURL(),steps.get(j).getThumbnailURL()));
 

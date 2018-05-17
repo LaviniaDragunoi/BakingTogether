@@ -6,9 +6,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
@@ -26,7 +28,8 @@ public class DetailsActivity extends AppCompatActivity {
     private ListsAdapter objectAdapter;
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
-    private List<Object> objectList;
+    private AppRoomDatabase roomDB;
+    private static final String TAG = DetailsActivity.class.getSimpleName();
 
     @SuppressLint("NewApi")
     @Override
@@ -34,6 +37,7 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
 
+        roomDB = AppRoomDatabase.getsInstance(this);
         intent = getIntent();
         currentRecipe = intent.getParcelableExtra("Recipe");
         int currentRecipeId = currentRecipe.getId();
@@ -42,12 +46,13 @@ public class DetailsActivity extends AppCompatActivity {
         setTitle(currentRecipe.getName());
 
     ListFragment ingredientsFragment =  new ListFragment();
+    List<IngredientEntity> ingredientEntityList = roomDB.recipeDao().getIngredientsByRecipeId(currentRecipeId);
+      Log.d(TAG,"Lavinia: " + currentRecipeId + "are: " + ingredientEntityList);
+      FragmentManager fragmentManager = getSupportFragmentManager();
 
-     /*   FragmentManager fragmentManager = getSupportFragmentManager();
-        ingredientsFragment.bindDataToAdapter();
         fragmentManager.beginTransaction()
-                .add(R.id.ingredients_list,ingredientsFragment)
-                .commit();*/
+                .replace(R.id.ingredients_list,ingredientsFragment)
+                .commit();
     }
 
 }

@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.recipes.RecipesAdapter;
 
@@ -21,6 +22,9 @@ import static java.lang.String.valueOf;
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private List<Object> objectList;
     private static final int STEP = 0, INGREDIENT = 1;
+    @BindView(R.id.object_list_recycler_view)
+    RecyclerView objectRV;
+    AppRoomDatabase roomDB;
 
     public ListsAdapter(List<Object> objectList){
         this.objectList = objectList;
@@ -28,9 +32,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public int getItemViewType(int position) {
-        if(objectList.get(position) instanceof Ingredient){
+        if(objectList.get(position) instanceof IngredientEntity){
             return INGREDIENT;
-        }else if(objectList.get(position) instanceof Step){
+        }else if(objectList.get(position) instanceof StepEntity){
             return STEP;
         }
         return -1;
@@ -44,11 +48,11 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         switch (viewType){
             case INGREDIENT:
                 View v1 = inflater.inflate(R.layout.ingredient_item, parent, false);
-                viewHolder = new Ingredient(v1);
+                viewHolder = new IngredientEntity(v1);
                 break;
             case STEP:
                 View v2 = inflater.inflate(R.layout.steps_item_list, parent, false);
-                viewHolder = new Step(v2);
+                viewHolder = new StepEntity(v2);
                 break;
             default:
                 View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
@@ -62,11 +66,11 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()){
             case INGREDIENT:
-                Ingredient vh1 = (Ingredient) holder;
+                IngredientEntity vh1 = (IngredientEntity) holder;
                 configureIngredient(vh1,position);
                 break;
             case STEP:
-                Step vh2 = (Step) holder;
+                StepEntity vh2 = (StepEntity) holder;
                 configureStep(vh2, position);
                 break;
             default:
@@ -75,15 +79,15 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    private void configureStep(Step vh2, int position) {
-        Step step = (Step) objectList.get(position);
+    private void configureStep(StepEntity vh2, int position) {
+        StepEntity step = (StepEntity) objectList.get(position);
         if(step != null){
             vh2.getStepNameTV().setText(step.getShortDescription());
         }
     }
 
-    private void configureIngredient(Ingredient vh1, int position) {
-        Ingredient ingredient = (Ingredient) objectList.get(position);
+    private void configureIngredient(IngredientEntity vh1, int position) {
+        IngredientEntity ingredient = (IngredientEntity) objectList.get(position);
         if(ingredient != null){
             vh1.getQuantityTV().setText(valueOf(ingredient.getQuantity()));
             vh1.getMeasurementTV().setText(ingredient.getMeasure());
@@ -95,7 +99,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemCount() {
         return this.objectList.size();
     }
-    class Ingredient extends RecyclerView.ViewHolder{
+    class IngredientEntity extends RecyclerView.ViewHolder{
 
         private Double quantity;
 
@@ -111,7 +115,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         TextView ingredientTV;
 
 
-        public Ingredient(View view){
+        public IngredientEntity(View view){
             super(view);
             ButterKnife.bind(this, view);
         }
@@ -166,7 +170,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    class Step extends RecyclerView.ViewHolder{
+    class StepEntity extends RecyclerView.ViewHolder{
 
         private Integer id;
 
@@ -179,7 +183,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private String thumbnailURL;
         @BindView(R.id.step_name_radio_button)
         RadioButton stepNameTV;
-        public Step(View view) {
+        public StepEntity(View view) {
             super(view);
             ButterKnife.bind(this,view);
         }
@@ -234,5 +238,9 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
+    public void bindDataToAdapter(List<Object> objectList) {
+        // Bind adapter to recycler view object
+        objectRV.setAdapter(new ListsAdapter(objectList));
+    }
 }
 

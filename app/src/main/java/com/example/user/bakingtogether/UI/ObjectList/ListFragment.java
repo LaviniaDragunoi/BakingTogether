@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.Ingredient;
@@ -27,6 +28,8 @@ public class ListFragment extends Fragment {
     Button clearButton;
     ListsAdapter objectAdapter;
     List<Object> objectList;
+    private AppRoomDatabase roomDB;
+
     public ListFragment(){
 
     }
@@ -34,13 +37,8 @@ public class ListFragment extends Fragment {
     public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
         View rootView = inflater.inflate(R.layout.object_list_fragment, container, false);
         ButterKnife.bind(this, rootView);
-        bindDataToAdapter();
         return rootView;
     }
-    public void bindDataToAdapter() {
-        // Bind adapter to recycler view object
-        objectAdapter = new ListsAdapter(objectList);
-        objectListRV.setAdapter(objectAdapter);
-    }
+
 
 }

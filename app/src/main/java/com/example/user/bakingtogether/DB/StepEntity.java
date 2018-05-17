@@ -39,8 +39,8 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
     @Expose
     private String thumbnailURL;
 
-        public StepEntity(int id, String shortDescription, String description, String videoURL, String thumbnailURL){
-            this.id = id;
+        public StepEntity(int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL){
+            this.recipeId = recipeId;
             this.shortDescription = shortDescription;
             this.description = description;
             this.videoURL = videoURL;
@@ -49,7 +49,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         }
 
         @Ignore
-        public StepEntity(int recipeId, int id, String shortDescription, String description, String videoURL, String thumbnailURL){
+        public StepEntity(int id,int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL){
             this.recipeId = recipeId;
             this.id = id;
             this.shortDescription = shortDescription;
