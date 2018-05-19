@@ -13,7 +13,9 @@ import android.widget.TextView;
 
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
+import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
+import com.example.user.bakingtogether.adapter.IngredientsAdapter;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.Ingredient;
 import com.example.user.bakingtogether.data.Step;
@@ -24,7 +26,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class ListFragment extends Fragment {
+public class MyListsFragment extends Fragment {
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
     @BindView(R.id.clear_button)
@@ -34,7 +36,7 @@ public class ListFragment extends Fragment {
     List<Object> objectList;
     private AppRoomDatabase roomDB;
 
-    public ListFragment(){
+    public MyListsFragment(){
 
     }
     @Override
@@ -42,10 +44,14 @@ public class ListFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.object_list_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
+        RecyclerView.LayoutManager layoutManagerReviews = new
+                LinearLayoutManager(mContext);
+        objectListRV.setLayoutManager(layoutManagerReviews);
+
         return rootView;
     }
 
-    public List<Object> convertIngredientListToOrbjectList(List<IngredientEntity> ingredientEntityList){
+   public List<Object> convertIngredientListToObjectList(List<IngredientEntity> ingredientEntityList){
         List<Object> newObjectList = new ArrayList<>();
         for(int i = 0; i<ingredientEntityList.size(); i++){
             newObjectList.add(ingredientEntityList.get(i));
@@ -53,13 +59,19 @@ public class ListFragment extends Fragment {
         return newObjectList;
     }
 
+    public List<Object> convertStepsListToObjectList(List<StepEntity> stepsEntityList){
+        List<Object> newObjectList = new ArrayList<>();
+        for(int i = 0; i<stepsEntityList.size(); i++){
+            newObjectList.add(stepsEntityList.get(i));
+        }
+        return newObjectList;
+    }
 
 
-    public void bindDataToAdapter(Context context, List<Object> objectList) {
+
+    public void bindDataToAdapter(List<Object> objectList) {
         // Bind adapter to recycler view object
-        RecyclerView.LayoutManager layoutManagerReviews = new
-                LinearLayoutManager(context);
-        objectListRV.setLayoutManager(layoutManagerReviews);
+
         objectListRV.setAdapter(new ListsAdapter(objectList));
     }
 }

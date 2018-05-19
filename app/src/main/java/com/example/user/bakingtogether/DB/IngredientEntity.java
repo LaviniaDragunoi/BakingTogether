@@ -5,6 +5,8 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -16,7 +18,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                 parentColumns = "id",
                 childColumns = "recipeId",
                 onDelete = CASCADE))
-public class IngredientEntity {
+public class IngredientEntity implements Parcelable {
     @PrimaryKey(autoGenerate = true)
     @Expose(deserialize = false, serialize = false)
     private int id;
@@ -49,6 +51,34 @@ public class IngredientEntity {
         this.measure = measure;
         this.ingredient = ingredient;
     }
+
+    protected IngredientEntity(Parcel in) {
+        id = in.readInt();
+        if (in.readByte() == 0) {
+            recipeId = null;
+        } else {
+            recipeId = in.readInt();
+        }
+        if (in.readByte() == 0) {
+            quantity = null;
+        } else {
+            quantity = in.readDouble();
+        }
+        measure = in.readString();
+        ingredient = in.readString();
+    }
+
+    public static final Creator<IngredientEntity> CREATOR = new Creator<IngredientEntity>() {
+        @Override
+        public IngredientEntity createFromParcel(Parcel in) {
+            return new IngredientEntity(in);
+        }
+
+        @Override
+        public IngredientEntity[] newArray(int size) {
+            return new IngredientEntity[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -88,5 +118,29 @@ public class IngredientEntity {
 
     public void setIngredient(String ingredient) {
         this.ingredient = ingredient;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        if (recipeId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(recipeId);
+        }
+        if (quantity == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeDouble(quantity);
+        }
+        dest.writeString(measure);
+        dest.writeString(ingredient);
     }
 }

@@ -33,11 +33,10 @@ import static java.lang.String.valueOf;
 
 public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder> {
 
-    private List<RecipeResponse> recipesList;
+    private List<RecipeEntity> recipesList;
     private Context context;
-    private AppRoomDatabase mDb;
 
-    public RecipesAdapter (Context context, List<RecipeResponse> recipesList){
+    public RecipesAdapter (Context context, List<RecipeEntity> recipesList){
         this.context = context;
         this.recipesList = recipesList;
     }
@@ -52,13 +51,13 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
 
     @Override
     public void onBindViewHolder(@NonNull final RecipesViewHolder holder, int position) {
-        final RecipeResponse recipeResponse = recipesList.get(position);
+        final RecipeEntity recipeEntity = recipesList.get(position);
 
         TextView recipeNameTextView = holder.recipeName;
-        String name = recipeResponse.getName();
+        String name = recipeEntity.getName();
         recipeNameTextView.setText(name);
         ImageView recipeImageView = holder.recipeImage;
-        String imageString = recipeResponse.getImage();
+        String imageString = recipeEntity.getImage();
         if( imageString != null && !imageString.isEmpty()) {
             Picasso.get().load(Uri.parse(imageString)).into(recipeImageView);
 
@@ -68,7 +67,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
-                intent.putExtra("Recipe", recipeResponse);
+                intent.putExtra("Recipe", recipeEntity);
                 holder.itemView.getContext().startActivity(intent);
             }
         });
