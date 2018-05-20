@@ -16,6 +16,7 @@ import com.example.user.bakingtogether.UI.ObjectList.MyListsFragment;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.RecipeResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -49,11 +50,10 @@ public class DetailsActivity extends AppCompatActivity {
 
         //Ingredients list fragment
     MyListsFragment ingredientsFragment =  new MyListsFragment();
-    List<IngredientEntity> ingredientEntityList = roomDB.recipeDao().getIngredientsByRecipeId(currentRecipeId);
-
-     /* Bundle ingredientBundle = new Bundle();
-      ingredientBundle.putParcelable("IngredientsList", (Parcelable) ingredientEntityList);
-        ingredientsFragment.setArguments(ingredientBundle);
+        List<IngredientEntity> ingredientEntityList = roomDB.recipeDao().getIngredientsByRecipeId(currentRecipeId);
+    ArrayList<IngredientEntity> ingredientEntities = new ArrayList<>(ingredientEntityList);
+        Bundle ingredientBundle = new Bundle();
+        ingredientBundle.putParcelableArrayList("IngredientsList", ingredientEntities);
       FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.ingredients_list,ingredientsFragment)

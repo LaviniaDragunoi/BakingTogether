@@ -3,7 +3,6 @@ package com.example.user.bakingtogether.data;
  * Created by Lavinia Dragunoi on 7-05-2018
  */
 
-import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -23,7 +22,7 @@ public class RecipeResponse implements Parcelable{
     private String name;
     @SerializedName("ingredients")
     @Expose
-    private List<Ingredient> ingredients = null;
+    private List<Ingredients> ingredients = null;
     @SerializedName("steps")
     @Expose
     private List<Step> steps = null;
@@ -77,11 +76,11 @@ public class RecipeResponse implements Parcelable{
         this.name = name;
     }
 
-    public List<Ingredient> getIngredients() {
+    public List<Ingredients> getIngredients() {
         return ingredients;
     }
 
-    public void setIngredients(List<Ingredient> ingredients) {
+    public void setIngredients(List<Ingredients> ingredients) {
         this.ingredients = ingredients;
     }
 

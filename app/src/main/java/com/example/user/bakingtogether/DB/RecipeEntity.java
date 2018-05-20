@@ -8,11 +8,6 @@ import android.arch.persistence.room.PrimaryKey;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.example.user.bakingtogether.data.Ingredient;
-import com.example.user.bakingtogether.data.Step;
-
-import java.util.List;
-
 @Entity(tableName = "recipes")
 public class RecipeEntity implements Parcelable{
 

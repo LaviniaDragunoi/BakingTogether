@@ -5,6 +5,8 @@ import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
@@ -16,7 +18,7 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
                     parentColumns = "id",
                     childColumns = "recipeId",
                     onDelete = CASCADE))
-    public class StepEntity{
+    public class StepEntity implements Parcelable{
         @PrimaryKey(autoGenerate = true)
         @Expose(deserialize = false, serialize = false)
         private int id;
@@ -58,6 +60,31 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
             this.thumbnailURL = thumbnailURL;
 
         }
+
+    protected StepEntity(Parcel in) {
+        id = in.readInt();
+        if (in.readByte() == 0) {
+            recipeId = null;
+        } else {
+            recipeId = in.readInt();
+        }
+        shortDescription = in.readString();
+        description = in.readString();
+        videoURL = in.readString();
+        thumbnailURL = in.readString();
+    }
+
+    public static final Creator<StepEntity> CREATOR = new Creator<StepEntity>() {
+        @Override
+        public StepEntity createFromParcel(Parcel in) {
+            return new StepEntity(in);
+        }
+
+        @Override
+        public StepEntity[] newArray(int size) {
+            return new StepEntity[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -105,5 +132,25 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        if (recipeId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(recipeId);
+        }
+        dest.writeString(shortDescription);
+        dest.writeString(description);
+        dest.writeString(videoURL);
+        dest.writeString(thumbnailURL);
     }
 }

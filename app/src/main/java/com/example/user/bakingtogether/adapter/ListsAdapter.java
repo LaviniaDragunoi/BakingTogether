@@ -1,5 +1,6 @@
 package com.example.user.bakingtogether.adapter;
 
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -8,11 +9,10 @@ import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
-import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.recipes.RecipesAdapter;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,11 +20,11 @@ import butterknife.ButterKnife;
 import static java.lang.String.valueOf;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private List<Object> objectList;
+    private ArrayList<Parcelable> objectList;
     private static final int STEP = 0, INGREDIENT = 1;
 
 
-    public ListsAdapter(List<Object> objectList){
+    public ListsAdapter(ArrayList<Parcelable> objectList){
         this.objectList = objectList;
     }
 
@@ -32,7 +32,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemViewType(int position) {
         if(objectList.get(position) instanceof IngredientEntity){
             return INGREDIENT;
-        }else if(objectList.get(position) instanceof StepEntity){
+        }else if(objectList.get(position) instanceof StepViewHolder){
             return STEP;
         }
         return -1;
@@ -50,7 +50,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 break;
             case STEP:
                 View v2 = inflater.inflate(R.layout.steps_item_list, parent, false);
-                viewHolder = new StepEntity(v2);
+                viewHolder = new StepViewHolder(v2);
                 break;
             default:
                 View v = inflater.inflate(android.R.layout.simple_list_item_1, parent, false);
@@ -68,7 +68,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 configureIngredient(vh1,position);
                 break;
             case STEP:
-                StepEntity vh2 = (StepEntity) holder;
+                StepViewHolder vh2 = (StepViewHolder) holder;
                 configureStep(vh2, position);
                 break;
             default:
@@ -77,8 +77,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    private void configureStep(StepEntity vh2, int position) {
-        StepEntity step = (StepEntity) objectList.get(position);
+    private void configureStep(StepViewHolder vh2, int position) {
+        StepViewHolder step = (StepViewHolder) objectList.get(position);
         if(step != null){
             vh2.getStepNameTV().setText(step.getShortDescription());
         }
@@ -97,6 +97,8 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
     public int getItemCount() {
         return this.objectList.size();
     }
+    
+    
     class IngredientEntity extends RecyclerView.ViewHolder{
 
         private Double quantity;
@@ -168,7 +170,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     }
 
-    class StepEntity extends RecyclerView.ViewHolder{
+    class StepViewHolder extends RecyclerView.ViewHolder{
 
         private Integer id;
 
@@ -181,7 +183,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
         private String thumbnailURL;
         @BindView(R.id.step_name_radio_button)
         RadioButton stepNameTV;
-        public StepEntity(View view) {
+        public StepViewHolder(View view) {
             super(view);
             ButterKnife.bind(this,view);
         }

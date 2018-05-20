@@ -5,8 +5,6 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
 
-import com.example.user.bakingtogether.data.Ingredient;
-
 import java.util.List;
 
 import static android.arch.persistence.room.OnConflictStrategy.REPLACE;
@@ -19,21 +17,13 @@ public abstract class RecipeDao {
 
     @Insert(onConflict = REPLACE)
     public abstract void insertRecipe(RecipeEntity recipeEntity);
-    @Insert(onConflict = REPLACE)
-    public abstract void insertRecipeWithIngredients(RecipeEntity recipeEntity,
-                                                     List<IngredientEntity> ingredientEntityList);
+
+   @Insert(onConflict = REPLACE)
+   public abstract void insertIngredients(IngredientEntity ingredientEntity);
+
 
     @Insert(onConflict = REPLACE)
-    public abstract void insertRecipeWithSteps(RecipeEntity recipeEntity,
-                                                     List<StepEntity> stepEntityList);
-    @Insert(onConflict = REPLACE)
-    public abstract void insertIngredients(List<IngredientEntity> ingredientEntityList);
-    @Insert(onConflict = REPLACE)
-    public abstract void insertRecipeWithItem(RecipeEntity recipeEntity,List<IngredientEntity> ingredientEntityList,
-                                              List<StepEntity> stepEntityList);
-
-    @Insert(onConflict = REPLACE)
-    public abstract void insertSteps(List<StepEntity> stepEntityList);
+   public abstract void insertSteps(StepEntity stepEntity);
 
     @Query("SELECT * FROM recipes")
     public abstract List<RecipeEntity> loadAllRecipes();
@@ -45,7 +35,13 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
     public abstract List<IngredientEntity> getIngredientsByRecipeId(int id);
 
+ @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
+ public abstract IngredientEntity getIngredientByRecipeId(int id);
+
     @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
     public abstract List<StepEntity> getStepsByRecipeId(int id);
+
+    @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
+    public abstract StepEntity getStepByRecipeId(int id);
 
 }

@@ -17,7 +17,7 @@ import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.data.ApiUtils;
-import com.example.user.bakingtogether.data.Ingredient;
+import com.example.user.bakingtogether.data.Ingredients;
 import com.example.user.bakingtogether.data.RecipeApiInterface;
 import com.example.user.bakingtogether.data.RecipeResponse;
 import com.example.user.bakingtogether.data.Step;
@@ -61,43 +61,45 @@ public class RecipesFragment extends Fragment {
                 List<RecipeResponse> recipes = response.body();
 
                 //writing in RoomDB
-                List<StepEntity> stepsListEntity = new ArrayList<>();
+
                 RecipeEntity  recipeEntity = null;
-                List<RecipeEntity> recipesEntity = new ArrayList<>();
-                List<IngredientEntity> ingredientsListEntity = new ArrayList<>();
+                List<RecipeEntity> recipesEntityList = new ArrayList<>();
+
                 for(int i=0; i< recipes.size(); i++) {
-                    recipeEntity = new RecipeEntity(recipes.get(i).getId(), recipes.get(i).getName(),
+                    List<Ingredients> ingredientsList = new ArrayList<>();
+                    List<IngredientEntity> ingredientsListEntity = new ArrayList<>();
+                    List<StepEntity> stepsListEntity = new ArrayList<>();
+                    List<Step> steps = new ArrayList<>();
+
+                            recipeEntity = new RecipeEntity(recipes.get(i).getId(), recipes.get(i).getName(),
                             recipes.get(i).getServings(), recipes.get(i).getImage());
+                    roomDB.recipeDao().insertRecipe(recipeEntity);
                     int recipeId = recipeEntity.getId();
-                    recipesEntity.add(recipeEntity);
-
-                    List<Ingredient> ingredientsList = recipes.get(i).getIngredients();
+                    recipesEntityList.add(recipeEntity);
+                    ingredientsList = recipes.get(i).getIngredients();
                     for(int j = 0; j< ingredientsList.size(); j++){
-                        ingredientsListEntity.add(new IngredientEntity(recipeId,(double)(ingredientsList.get(j).getQuantity()),
-                                ingredientsList.get(j).getMeasure(), ingredientsList.get(j).getIngredient()));
-
+                        IngredientEntity ingredient = new IngredientEntity(recipeId,(double)(ingredientsList.get(j).getQuantity()),
+                                ingredientsList.get(j).getMeasure(), ingredientsList.get(j).getIngredient());
+                        ingredientsListEntity.add(ingredient);
+                        roomDB.recipeDao().insertIngredients(ingredient);
                     }
 
-                    roomDB.recipeDao().insertRecipeWithIngredients(recipeEntity,ingredientsListEntity);
-
-                    List<Step> steps = recipes.get(i).getSteps();
-
+                    steps = recipes.get(i).getSteps();
                     for(int j = 0; j< steps.size(); j++){
-
-                        stepsListEntity.add(new StepEntity(steps.get(j).getId(),recipeId,
+                        StepEntity stepEntity = new StepEntity(recipeId,
                                 steps.get(j).getShortDescription(),steps.get(j).getDescription(),
-                                steps.get(j).getVideoURL(),steps.get(j).getThumbnailURL()));
-
+                                steps.get(j).getVideoURL(),steps.get(j).getThumbnailURL());
+                        stepsListEntity.add(stepEntity);
+                        roomDB.recipeDao().insertSteps(stepEntity);
                     }
-
-                 roomDB.recipeDao().insertRecipeWithSteps(recipeEntity,stepsListEntity);
 
                 }
+
 
                 RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(),1);
                 recipesPB.setVisibility(View.INVISIBLE);
                 recipesRW.setLayoutManager(layoutManager);
-                recipesAdapter = new RecipesAdapter(mContext,recipesEntity);
+                recipesAdapter = new RecipesAdapter(mContext,recipesEntityList);
                 recipesRW.setAdapter(recipesAdapter);
             }
 
