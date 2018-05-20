@@ -54,6 +54,7 @@ public class DetailsActivity extends AppCompatActivity {
     ArrayList<IngredientEntity> ingredientEntities = new ArrayList<>(ingredientEntityList);
         Bundle ingredientBundle = new Bundle();
         ingredientBundle.putParcelableArrayList("IngredientsList", ingredientEntities);
+        ingredientsFragment.setArguments(ingredientBundle);
       FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.ingredients_list,ingredientsFragment)
