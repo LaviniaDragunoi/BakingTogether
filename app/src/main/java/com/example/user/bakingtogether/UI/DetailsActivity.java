@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.RecipeEntity;
+import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.ObjectList.MyListsFragment;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
@@ -55,19 +56,22 @@ public class DetailsActivity extends AppCompatActivity {
         Bundle ingredientBundle = new Bundle();
         ingredientBundle.putParcelableArrayList("IngredientsList", ingredientEntities);
         ingredientsFragment.setArguments(ingredientBundle);
-      FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.ingredients_list,ingredientsFragment)
-                .commit();
+
 
         //Steps list fragment
-       /* MyListsFragment stepsFragment =  new MyListsFragment();
+     /*  MyListsFragment stepsFragment =  new MyListsFragment();
         List<StepEntity> stepEntityList = roomDB.recipeDao().getStepsByRecipeId(currentRecipeId);
-        List<Object> objectListStep = stepsFragment.convertStepsListToOrbjectList(stepEntityList);
-        stepsFragment.bindDataToAdapter(objectListStep);
+        ArrayList<StepEntity> stepEntities = new ArrayList<>(stepEntityList);
+        Bundle stepBundle = new Bundle();
+        stepBundle.putParcelableArrayList("StepsList", stepEntities);
+       stepsFragment.setArguments(stepBundle);*/
+
+
+        FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.steps_list,ingredientsFragment)
-                .commit();*/
+                .replace(R.id.ingredients_list,ingredientsFragment)
+              //  .replace(R.id.steps_list, stepsFragment)
+                .commit();
 
     }
 

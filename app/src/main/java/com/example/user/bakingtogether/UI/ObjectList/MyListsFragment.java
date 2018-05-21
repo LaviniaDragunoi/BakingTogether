@@ -25,7 +25,6 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MyListsFragment extends Fragment {
-    private static final int DEFAULT_VALUE = -1;
     private static final String LOG_TAG = MyListsFragment.class.getSimpleName();
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
@@ -35,7 +34,7 @@ public class MyListsFragment extends Fragment {
     ListsAdapter objectAdapter;
     private AppRoomDatabase roomDB;
     private int recipeId;
-    private ArrayList<Parcelable> objectList;
+    private ArrayList<Parcelable> objectIngredientsList, objectStepsList;
 
     public MyListsFragment(){
 
@@ -45,18 +44,21 @@ public class MyListsFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.object_list_fragment, container, false);
         ButterKnife.bind(this, rootView);
         Bundle bundle = getArguments();
-        objectList = bundle.getParcelableArrayList("IngredientsList");
-        Log.d(LOG_TAG,"The value of bundle is: " + objectList );
-       
+
+        objectIngredientsList = bundle.getParcelableArrayList("IngredientsList");
+        Log.d(LOG_TAG,"The value of bundle is: " + objectIngredientsList );
+
+     //   objectStepsList = bundle.getParcelableArrayList("StepsList");
+
         RecyclerView.LayoutManager layoutManagerReviews = new
                 LinearLayoutManager(mContext);
         objectListRV.setLayoutManager(layoutManagerReviews);
 
-        bindDataToAdapter(objectList);
+        bindDataToAdapter(objectIngredientsList);
         return rootView;
     }
 
-   public List<Object> convertIngredientListToObjectList(List<IngredientEntity> ingredientEntityList){
+  /* public List<Object> convertIngredientListToObjectList(List<IngredientEntity> ingredientEntityList){
         List<Object> newObjectList = new ArrayList<>();
         for(int i = 0; i<ingredientEntityList.size(); i++){
             newObjectList.add(ingredientEntityList.get(i));
@@ -70,7 +72,7 @@ public class MyListsFragment extends Fragment {
             newObjectList.add(stepsEntityList.get(i));
         }
         return newObjectList;
-    }
+    }*/
 
 
 

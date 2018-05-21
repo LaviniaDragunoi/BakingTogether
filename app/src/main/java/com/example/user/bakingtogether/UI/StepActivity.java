@@ -9,7 +9,6 @@ import com.example.user.bakingtogether.R;
 
 public class StepActivity extends AppCompatActivity {
 
-    private static final int DEFAULT_ID = -1;
     private AppRoomDatabase roomDB;
 
     @Override
