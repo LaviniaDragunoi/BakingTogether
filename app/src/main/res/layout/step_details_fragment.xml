@@ -8,13 +8,12 @@
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:ignore="UselessParent">
+    android:orientation="vertical">
 
 
     <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/video_view"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="5dp"
         android:layout_weight="4"/>
@@ -36,7 +35,7 @@
 <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
-    android:layout_weight="2">
+    android:layout_weight="1">
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/previous_fab"
         android:layout_height="wrap_content"
