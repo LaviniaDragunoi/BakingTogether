@@ -41,7 +41,7 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
     public abstract List<StepEntity> getStepsByRecipeId(int id);
 
-    @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
-    public abstract StepEntity getStepByRecipeId(int id);
+    @Query("SELECT * FROM StepEntity WHERE id = :id")
+    public abstract StepEntity getStepByStepId(int id);
 
 }

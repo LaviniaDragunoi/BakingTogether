@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".UI.DetailsActivity"
+    tools:context=".UI.DetailsActivity">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
     <TextView
         android:id="@+id/ingredients_list_title"
@@ -19,6 +23,15 @@
 <include
     android:id="@+id/ingredients_list"
     layout="@layout/object_list_fragment"/>
+    <Button
+        android:id="@+id/clear_ingredients"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear all"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/singleColor"/>
+
     <View
         android:layout_width="match_parent"
         android:layout_height="2dp"
@@ -39,4 +52,13 @@
     <include
         android:id="@+id/steps_list"
         layout="@layout/object_list_fragment"/>
+    <Button
+        android:id="@+id/clear_steps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Clear all"
+        android:textColor="@color/colorAccent"
+        android:layout_gravity="center_horizontal"
+        android:backgroundTint="@color/singleColor"/>
 </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

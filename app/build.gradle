@@ -31,14 +31,14 @@ dependencies {
     //Picasso
     implementation 'com.squareup.picasso:picasso:2.71828'
     //Retrofit and Gson
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.google.code.gson:gson:2.8.2'
     //butterKnife
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
     //EXoPlayer
-    implementation 'com.google.android.exoplayer:exoplayer:2.7.1'
+    implementation 'com.google.android.exoplayer:exoplayer:2.7.3'
     //Room
     implementation 'android.arch.persistence.room:runtime:1.1.0'
     annotationProcessor 'android.arch.persistence.room:compiler:1.1.0'

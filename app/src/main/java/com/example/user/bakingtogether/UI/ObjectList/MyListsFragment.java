@@ -1,6 +1,7 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -16,6 +17,7 @@ import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
+import com.example.user.bakingtogether.UI.StepActivity;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 
 import java.util.ArrayList;
@@ -28,8 +30,6 @@ public class MyListsFragment extends Fragment {
     private static final String LOG_TAG = MyListsFragment.class.getSimpleName();
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
-    @BindView(R.id.clear_button)
-    Button clearButton;
     private Context mContext;
     ListsAdapter objectAdapter;
     private AppRoomDatabase roomDB;
@@ -45,38 +45,25 @@ public class MyListsFragment extends Fragment {
         ButterKnife.bind(this, rootView);
         Bundle bundle = getArguments();
 
-        objectIngredientsList = bundle.getParcelableArrayList("IngredientsList");
-        Log.d(LOG_TAG,"The value of bundle is: " + objectIngredientsList );
-
-     //   objectStepsList = bundle.getParcelableArrayList("StepsList");
 
         RecyclerView.LayoutManager layoutManagerReviews = new
                 LinearLayoutManager(mContext);
         objectListRV.setLayoutManager(layoutManagerReviews);
 
+        objectIngredientsList = bundle.getParcelableArrayList("IngredientsList");
+        Log.d(LOG_TAG,"The value of bundle is: " + objectIngredientsList );
+
+        objectStepsList = bundle.getParcelableArrayList("StepsList");
+
+        if(objectIngredientsList != null){
         bindDataToAdapter(objectIngredientsList);
+        }else if(objectStepsList != null) {
+            bindDataToAdapter(objectStepsList);
+        }
         return rootView;
     }
 
-  /* public List<Object> convertIngredientListToObjectList(List<IngredientEntity> ingredientEntityList){
-        List<Object> newObjectList = new ArrayList<>();
-        for(int i = 0; i<ingredientEntityList.size(); i++){
-            newObjectList.add(ingredientEntityList.get(i));
-        }
-        return newObjectList;
-    }
-
-    public List<Object> convertStepsListToObjectList(List<StepEntity> stepsEntityList){
-        List<Object> newObjectList = new ArrayList<>();
-        for(int i = 0; i<stepsEntityList.size(); i++){
-            newObjectList.add(stepsEntityList.get(i));
-        }
-        return newObjectList;
-    }*/
-
-
-
-    public void bindDataToAdapter(ArrayList<Parcelable> objectList) {
+     public void bindDataToAdapter(ArrayList<Parcelable> objectList) {
         // Bind adapter to recycler view object
 
         objectListRV.setAdapter(new ListsAdapter(objectList));
