@@ -95,6 +95,7 @@ public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
                 }
             });
+
         }
 
 

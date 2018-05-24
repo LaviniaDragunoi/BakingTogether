@@ -13,11 +13,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
+import com.example.user.bakingtogether.UI.StepActivity;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.DefaultRenderersFactory;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -50,20 +52,21 @@ public class StepFragment extends Fragment {
     FloatingActionButton previousFAB;
     @BindView(R.id.next_fab)
     FloatingActionButton nextFAB;
-    @BindView(R.id.video_view)
+   /* @BindView(R.id.video_view)
     public PlayerView playerView;
     @BindView(R.id.image_logo)
-    ImageView imageViewLogo;
+    ImageView imageViewLogo;*/
 
 
     StepEntity currentStep;
-AppRoomDatabase roomDB;
+    AppRoomDatabase roomDB;
     private List<StepEntity> stepsList;
     private int stepId;
     public SimpleExoPlayer player;
     public boolean playWhenReady;
     public long playBackPosition;
     public int currentWindow;
+
 
     public StepFragment(){}
 
@@ -75,41 +78,54 @@ AppRoomDatabase roomDB;
         roomDB = AppRoomDatabase.getsInstance(getContext());
         Bundle bundle = getArguments();
         currentStep = bundle.getParcelable("CurrentStep");
-
+        stepsList = roomDB.recipeDao().getStepsByRecipeId(currentStep.getRecipeId());
         stepId = currentStep.getId();
         populateUI(stepId);
 
-        stepsList =roomDB.recipeDao().getStepsByRecipeId(currentStep.getRecipeId());
-
-            if (currentStep.getId() == (stepsList.get(0).getId())) {
-                previousFAB.hide();
-            } else previousFAB.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    stepId--;
-                    populateUI(stepId);
+        nextFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stepId++;
+                if(stepId == (stepsList.get(stepsList.size() -1).getId()));{
+                populateUI(stepId);
                 }
-            });
-            if (stepId == (stepsList.size() - 1)) {
-                nextFAB.hide();
-            } else {
-                nextFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        stepId++;
-                        populateUI(stepId);
-                    }
-                });
             }
+        });
+        previousFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stepId--;
+                populateUI(stepId);
+            }
+        });
+
 
         return rootView;
     }
 
     public void populateUI(int stepId){
-
         currentStep = roomDB.recipeDao().getStepByStepId(stepId);
         stepDescription.setText(currentStep.getDescription());
-        if(!TextUtils.isEmpty(currentStep.getVideoURL()) || !(currentStep.getVideoURL().equals(""))){
+
+        ((StepActivity) getActivity())
+                .setActionBarTitle(currentStep.getShortDescription());
+        if (stepId == stepsList.get(0).getId()) {
+
+            previousFAB.setVisibility(View.GONE);
+            nextFAB.setVisibility(View.VISIBLE);
+
+
+        } else{ if (stepId == (stepsList.get(stepsList.size() - 1).getId())) {
+
+            previousFAB.setVisibility(View.VISIBLE);
+            nextFAB.setVisibility(View.GONE);
+
+        }else {
+            previousFAB.setVisibility(View.VISIBLE);
+            nextFAB.setVisibility(View.VISIBLE);
+        }
+        }
+      /*  if(!TextUtils.isEmpty(currentStep.getVideoURL()) || !(currentStep.getVideoURL().equals(""))){
             imageViewLogo.setVisibility(View.GONE);
 
         initializePlayer(Uri.parse(currentStep.getVideoURL()));
@@ -120,10 +136,10 @@ AppRoomDatabase roomDB;
         }else {
             playerView.setVisibility(View.GONE);
             Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
-        }
+        }*/
     }
     
-    public void initializePlayer(Uri mediaUri){
+  /*  public void initializePlayer(Uri mediaUri){
         if(player == null){
             //Create and instance for ExoPLayer
             TrackSelector trackSelector = new DefaultTrackSelector();
@@ -169,7 +185,7 @@ AppRoomDatabase roomDB;
             releasePlayer();
         }
     }
-
+*/
 
 
 }

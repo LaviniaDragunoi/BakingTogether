@@ -20,6 +20,7 @@ public class StepActivity extends AppCompatActivity {
     StepEntity currentStep;
 
 
+
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class StepActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
        currentStep = intent.getParcelableExtra("CurrentStep");
-       setTitle(currentStep.getShortDescription());
+
        int currentStepId = currentStep.getId();
 
         StepFragment stepFragment = new StepFragment();
@@ -59,5 +60,7 @@ public class StepActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    public void setActionBarTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

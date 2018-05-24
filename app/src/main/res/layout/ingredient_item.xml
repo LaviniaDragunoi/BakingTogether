@@ -10,7 +10,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/colorPrimary"/>
         <TextView
             android:id="@+id/quantity"
@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             tools:text="2.00"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/colorPrimary"/>
         <TextView
             android:id="@+id/measurement"
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             tools:text="measurement"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/colorPrimary"/>
         <TextView
             android:id="@+id/ingredient"
@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             tools:text="ingredient"
-            android:textSize="16sp"
+            android:textSize="14sp"
             android:textColor="@color/colorPrimary"/>
 
     </LinearLayout>

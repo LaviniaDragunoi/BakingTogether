@@ -34,6 +34,7 @@ public class DetailsActivity extends AppCompatActivity {
     Button clearIngredients;
     @BindView(R.id.clear_steps)
     Button clearSteps;
+
     private AppRoomDatabase roomDB;
     private static final String TAG = DetailsActivity.class.getSimpleName();
 
