@@ -18,6 +18,7 @@ import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.StepActivity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -25,13 +26,14 @@ import butterknife.ButterKnife;
 import static java.lang.String.valueOf;
 
 public class ListsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private ArrayList<Parcelable> objectList;
+    private List<Object> objectList;
     private static final int STEP = 0, INGREDIENT = 1;
     private Context context;
 
 
-    public ListsAdapter(ArrayList<Parcelable> objectList){
-        this.objectList = objectList;
+    public ListsAdapter(Context context,List<Object> objectList){
+this.context = context;
+        this.objectList =  objectList;
     }
 
     @Override

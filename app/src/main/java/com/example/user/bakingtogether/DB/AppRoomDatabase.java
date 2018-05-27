@@ -32,16 +32,7 @@ public abstract class AppRoomDatabase extends RoomDatabase {
          if(sInstance == null){
              synchronized (LOCK){
                  sInstance = Room.databaseBuilder(context.getApplicationContext(),
-                         AppRoomDatabase.class, AppRoomDatabase.DATABASE_NAME)
-                         //trebuie sa schimb asta cand implementez live Data si View Model,
-                         // nu am voie sa scrius in Db in MainThread
-                         .allowMainThreadQueries()
-                         .addCallback(new Callback() {
-                             @Override
-                             public void onCreate(@NonNull SupportSQLiteDatabase db) {
-                                 super.onCreate(db);
-                             }
-                         });
+                         AppRoomDatabase.class, AppRoomDatabase.DATABASE_NAME);
              }
          }
         return sInstance.build();

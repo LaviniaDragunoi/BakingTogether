@@ -1,5 +1,6 @@
 package com.example.user.bakingtogether.UI.recipes;
 
+import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -31,9 +32,11 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
     private List<RecipeEntity> recipesList;
     private Context context;
 
-    public RecipesAdapter (Context context, List<RecipeEntity> recipesList){
+    public RecipesAdapter (Context context, List<RecipeEntity> recipeList){
         this.context = context;
-        this.recipesList = recipesList;
+        this.recipesList = recipeList;
+
+
     }
 
     @NonNull
@@ -70,6 +73,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
 
     @Override
     public int getItemCount() {
+        if(recipesList == null) return 0;
         return recipesList.size();
     }
 

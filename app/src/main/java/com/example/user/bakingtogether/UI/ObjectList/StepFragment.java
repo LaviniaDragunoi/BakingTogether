@@ -78,7 +78,7 @@ public class StepFragment extends Fragment {
         roomDB = AppRoomDatabase.getsInstance(getContext());
         Bundle bundle = getArguments();
         currentStep = bundle.getParcelable("CurrentStep");
-        stepsList = roomDB.recipeDao().getStepsByRecipeId(currentStep.getRecipeId());
+        stepsList = (List<StepEntity>) roomDB.recipeDao().getStepsByRecipeId(currentStep.getRecipeId());
         stepId = currentStep.getId();
         populateUI(stepId);
 

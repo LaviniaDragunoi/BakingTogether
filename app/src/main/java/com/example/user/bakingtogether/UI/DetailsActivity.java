@@ -1,6 +1,8 @@
 package com.example.user.bakingtogether.UI;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Parcelable;
 import android.support.v4.app.FragmentManager;
@@ -9,12 +11,15 @@ import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Button;
 
+import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
+import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.ObjectList.MyListsFragment;
+import com.example.user.bakingtogether.ViewModel.DetailsActivityViewModel;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.RecipeResponse;
 
@@ -34,9 +39,9 @@ public class DetailsActivity extends AppCompatActivity {
     Button clearIngredients;
     @BindView(R.id.clear_steps)
     Button clearSteps;
-
     private AppRoomDatabase roomDB;
     private static final String TAG = DetailsActivity.class.getSimpleName();
+
 
     @SuppressLint("NewApi")
     @Override
@@ -45,39 +50,36 @@ public class DetailsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_details);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
+
+
+
         roomDB = AppRoomDatabase.getsInstance(this);
         intent = getIntent();
         currentRecipe = intent.getParcelableExtra("Recipe");
-        int currentRecipeId = currentRecipe.getId();
-
+        final int currentRecipeId = currentRecipe.getId();
         //set recipe title
         setTitle(currentRecipe.getName());
 
         //Ingredients list fragment
-    MyListsFragment ingredientsFragment =  new MyListsFragment();
-        List<IngredientEntity> ingredientEntityList = roomDB.recipeDao().getIngredientsByRecipeId(currentRecipeId);
-    ArrayList<IngredientEntity> ingredientEntities = new ArrayList<>(ingredientEntityList);
-        Bundle ingredientBundle = new Bundle();
-        ingredientBundle.putParcelableArrayList("IngredientsList", ingredientEntities);
-        ingredientsFragment.setArguments(ingredientBundle);
+        MyListsFragment ingredientsFragment =  new MyListsFragment();
+        Bundle bundle = new Bundle();
+        bundle.putInt("CurrentRecipeIdForIngredients", currentRecipeId);
+        ingredientsFragment.setArguments(bundle);
 
 
         //Steps list fragment
-      MyListsFragment stepsFragment =  new MyListsFragment();
-        List<StepEntity> stepEntityList = roomDB.recipeDao().getStepsByRecipeId(currentRecipeId);
-        ArrayList<StepEntity> stepEntities = new ArrayList<>(stepEntityList);
-        Bundle stepBundle = new Bundle();
-        stepBundle.putParcelableArrayList("StepsList", stepEntities);
-       stepsFragment.setArguments(stepBundle);
-
-
+        MyListsFragment stepsFragment =  new MyListsFragment();
+        bundle.putInt("CurrentRecipeIdForSteps", currentRecipeId);
+        stepsFragment.setArguments(bundle);
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.ingredients_list,ingredientsFragment)
                 .replace(R.id.steps_list, stepsFragment)
                 .commit();
 
+
     }
+
 
 private void clearIngredientsList(){
 

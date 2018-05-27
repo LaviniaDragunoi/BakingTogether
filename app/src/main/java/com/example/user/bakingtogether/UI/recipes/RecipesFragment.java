@@ -1,5 +1,8 @@
 package com.example.user.bakingtogether.UI.recipes;
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.ViewModelProvider;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -11,11 +14,16 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
+import com.example.user.bakingtogether.DB.RecipeDao;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
+import com.example.user.bakingtogether.TheRepository;
+import com.example.user.bakingtogether.ViewModel.MainActivityViewModel;
+import com.example.user.bakingtogether.ViewModel.MainViewModelFactory;
 import com.example.user.bakingtogether.data.ApiUtils;
 import com.example.user.bakingtogether.data.Ingredients;
 import com.example.user.bakingtogether.data.RecipeApiInterface;
@@ -34,82 +42,52 @@ import retrofit2.Retrofit;
 
 public class RecipesFragment extends Fragment {
 
-    @BindView(R.id.recipes_recycler_view) RecyclerView recipesRW;
-    @BindView(R.id.recipes_progress_bar) ProgressBar recipesPB;
+    @BindView(R.id.recipes_recycler_view)
+    RecyclerView recipesRW;
+    @BindView(R.id.recipes_progress_bar)
+    ProgressBar recipesPB;
     @BindView(R.id.error_loading_recipes)
     TextView errorMessage;
     private RecipesAdapter recipesAdapter;
     private Retrofit retrofit;
     private Context mContext;
     private AppRoomDatabase roomDB;
+    private LiveData<List<RecipeEntity>> recipesList;
+    private TheRepository repository;
+    private MainActivityViewModel mainViewModel;
+    private MainViewModelFactory mMainViewModelFactory;
 
-    public RecipesFragment(){
+    private RecipeDao recipeDao;
+    private RecipeApiInterface recipeApiInterface;
+
+    public RecipesFragment() {
 
     }
 
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, final Bundle saveInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, final Bundle saveInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_recipes_main, container, false);
         ButterKnife.bind(this, rootView);
+
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(), 1);
+
+        recipesRW.setLayoutManager(layoutManager);
+
         roomDB = AppRoomDatabase.getsInstance(getContext());
-        recipesPB.setVisibility(View.VISIBLE);
-        RecipeApiInterface apiService = ApiUtils.getRecipeInterfaceResponse();
-        Call<List<RecipeResponse>> call = apiService.getRecipeResponse();
-        call.enqueue(new Callback<List<RecipeResponse>>() {
-            @Override
-            public void onResponse(Call<List<RecipeResponse>> call, Response<List<RecipeResponse>> response) {
-                List<RecipeResponse> recipes = response.body();
+        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
+                roomDB,roomDB.recipeDao(),ApiUtils.getRecipeInterfaceResponse());
+       mMainViewModelFactory = new MainViewModelFactory(repository);
+       mainViewModel = ViewModelProviders.of(this, mMainViewModelFactory).get(MainActivityViewModel.class);
+       mainViewModel.getRecipeEntity().observe(this,recipeEntities ->{
+           if(recipeEntities != null && recipeEntities.size() != 0){
 
-                //writing in RoomDB
-
-                RecipeEntity  recipeEntity = null;
-                List<RecipeEntity> recipesEntityList = new ArrayList<>();
-
-                for(int i=0; i< recipes.size(); i++) {
-                    List<Ingredients> ingredientsList = new ArrayList<>();
-                    List<IngredientEntity> ingredientsListEntity = new ArrayList<>();
-                    List<StepEntity> stepsListEntity = new ArrayList<>();
-                    List<Step> steps = new ArrayList<>();
-
-                            recipeEntity = new RecipeEntity(recipes.get(i).getId(), recipes.get(i).getName(),
-                            recipes.get(i).getServings(), recipes.get(i).getImage());
-                    roomDB.recipeDao().insertRecipe(recipeEntity);
-                    int recipeId = recipeEntity.getId();
-                    recipesEntityList.add(recipeEntity);
-                    ingredientsList = recipes.get(i).getIngredients();
-                    for(int j = 0; j< ingredientsList.size(); j++){
-                        IngredientEntity ingredient = new IngredientEntity(recipeId,(double)(ingredientsList.get(j).getQuantity()),
-                                ingredientsList.get(j).getMeasure(), ingredientsList.get(j).getIngredient());
-                        ingredientsListEntity.add(ingredient);
-                        roomDB.recipeDao().insertIngredients(ingredient);
-                    }
-
-                    steps = recipes.get(i).getSteps();
-                    for(int j = 0; j< steps.size(); j++){
-                        StepEntity stepEntity = new StepEntity(recipeId,
-                                steps.get(j).getShortDescription(),steps.get(j).getDescription(),
-                                steps.get(j).getVideoURL(),steps.get(j).getThumbnailURL());
-                        stepsListEntity.add(stepEntity);
-                        roomDB.recipeDao().insertSteps(stepEntity);
-                    }
-
-                }
-
-
-                RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(),1);
-                recipesPB.setVisibility(View.INVISIBLE);
-                recipesRW.setLayoutManager(layoutManager);
-                recipesAdapter = new RecipesAdapter(mContext,recipesEntityList);
-                recipesRW.setAdapter(recipesAdapter);
-            }
-
-            @Override
-            public void onFailure(Call<List<RecipeResponse>> call, Throwable t) {
-                recipesPB.setVisibility(View.INVISIBLE);
-                errorMessage.setVisibility(View.VISIBLE);
-
-            }
-        });
+               recipesAdapter = new RecipesAdapter(mContext,recipeEntities);
+               recipesPB.setVisibility(View.INVISIBLE);
+               recipesRW.setAdapter(recipesAdapter);
+           }else if(recipeEntities != null){
+               errorMessage.setVisibility(View.VISIBLE);
+           }
+       });
         return rootView;
     }
 }
