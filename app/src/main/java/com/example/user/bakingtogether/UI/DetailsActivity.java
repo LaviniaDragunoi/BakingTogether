@@ -61,19 +61,22 @@ public class DetailsActivity extends AppCompatActivity {
         setTitle(currentRecipe.getName());
 
         //Ingredients list fragment
+        FragmentManager fragmentManager = getSupportFragmentManager();
         MyListsFragment ingredientsFragment =  new MyListsFragment();
         Bundle bundle = new Bundle();
         bundle.putInt("CurrentRecipeIdForIngredients", currentRecipeId);
         ingredientsFragment.setArguments(bundle);
 
+        fragmentManager.beginTransaction()
+                .replace(R.id.ingredients_list,ingredientsFragment)
+                .commit();
 
         //Steps list fragment
         MyListsFragment stepsFragment =  new MyListsFragment();
         bundle.putInt("CurrentRecipeIdForSteps", currentRecipeId);
         stepsFragment.setArguments(bundle);
-        FragmentManager fragmentManager = getSupportFragmentManager();
+
         fragmentManager.beginTransaction()
-                .replace(R.id.ingredients_list,ingredientsFragment)
                 .replace(R.id.steps_list, stepsFragment)
                 .commit();
 

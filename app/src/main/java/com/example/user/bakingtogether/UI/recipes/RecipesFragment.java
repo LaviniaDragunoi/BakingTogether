@@ -69,25 +69,37 @@ public class RecipesFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_recipes_main, container, false);
         ButterKnife.bind(this, rootView);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(), 1);
-
-        recipesRW.setLayoutManager(layoutManager);
+        isLoadingData();
 
         roomDB = AppRoomDatabase.getsInstance(getContext());
-        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
-                roomDB,roomDB.recipeDao(),ApiUtils.getRecipeInterfaceResponse());
+        AppExecutors executors = AppExecutors.getInstance();
+        RecipeApiInterface recipeApiInterface =ApiUtils.getRecipeInterfaceResponse();
+        repository = TheRepository.getsInstance(executors,
+                roomDB,roomDB.recipeDao(),recipeApiInterface);
        mMainViewModelFactory = new MainViewModelFactory(repository);
        mainViewModel = ViewModelProviders.of(this, mMainViewModelFactory).get(MainActivityViewModel.class);
        mainViewModel.getRecipeEntity().observe(this,recipeEntities ->{
            if(recipeEntities != null && recipeEntities.size() != 0){
-
-               recipesAdapter = new RecipesAdapter(mContext,recipeEntities);
-               recipesPB.setVisibility(View.INVISIBLE);
+               RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(), 1);
+               recipesRW.setLayoutManager(layoutManager);
+               recipesAdapter = new RecipesAdapter(getContext(),recipeEntities);
+               showData();
                recipesRW.setAdapter(recipesAdapter);
            }else if(recipeEntities != null){
                errorMessage.setVisibility(View.VISIBLE);
+
            }
        });
         return rootView;
+    }
+    private void isLoadingData(){
+        recipesPB.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.GONE);
+        recipesRW.setVisibility(View.GONE);
+    }
+    private void showData(){
+        recipesPB.setVisibility(View.GONE);
+        recipesRW.setVisibility(View.VISIBLE);
+        errorMessage.setVisibility(View.GONE);
     }
 }

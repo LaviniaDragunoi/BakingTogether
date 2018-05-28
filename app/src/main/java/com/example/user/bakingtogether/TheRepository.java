@@ -105,12 +105,9 @@ public class TheRepository {
         return mRecipeDao.getIngredientsByRecipeId(recipeId);
     }
     private void addRecipesEntityFromResponse(List<RecipeResponse> recipeResponses){
-        RecipeEntity  recipeEntity = null;
-        List<RecipeEntity> recipesEntityList = new ArrayList<>();
-        try{
-            mRoomDB.beginTransaction();
-            mRoomDB.recipeDao().deleteAll();
 
+            RecipeEntity  recipeEntity = null;
+            List<RecipeEntity> recipesEntityList = new ArrayList<>();
         for(int i=0; i< recipeResponses.size(); i++) {
             List<Ingredients> ingredientsList;
             List<IngredientEntity> ingredientsListEntity = new ArrayList<>();
@@ -139,8 +136,6 @@ public class TheRepository {
                 mRoomDB.recipeDao().insertSteps(stepEntity);
             }
         }
-        }finally {
-            mRoomDB.endTransaction();
-        }
+
     }
 }

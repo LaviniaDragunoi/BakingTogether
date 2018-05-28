@@ -20,9 +20,10 @@
         android:textColor="@color/colorPrimary"
         android:layout_gravity="center"/>
 
-<include
+<FrameLayout
     android:id="@+id/ingredients_list"
-    layout="@layout/object_list_fragment"/>
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent"/>
     <Button
         android:id="@+id/clear_ingredients"
         android:layout_width="wrap_content"
@@ -49,9 +50,10 @@
         android:textStyle="bold"
         android:textColor="@color/colorPrimary"
         android:layout_gravity="center"/>
-    <include
+    <FrameLayout
         android:id="@+id/steps_list"
-        layout="@layout/object_list_fragment"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"/>
     <Button
         android:id="@+id/clear_steps"
         android:layout_width="wrap_content"
