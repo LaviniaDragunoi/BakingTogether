@@ -11,8 +11,8 @@
     android:layout_height="match_parent" />
 
     <ProgressBar
-        android:visibility="gone"
         android:id="@+id/recipes_progress_bar"
+        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"/>
@@ -20,7 +20,7 @@
         android:id="@+id/error_loading_recipes"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:text="No baking today!"
         android:textSize="20sp"
         android:drawableBottom="@drawable/ic_local_dining_black_24dp"

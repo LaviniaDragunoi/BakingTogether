@@ -25,10 +25,10 @@ import retrofit2.Response;
 public class TheRepository {
     private static final Object LOCK = new Object();
     private static TheRepository sInstance;
-    private AppRoomDatabase mRoomDB;
-    private RecipeDao mRecipeDao;
-    private RecipeApiInterface mRecipeApiInterface;
-    private AppExecutors mAppExecutors;
+    private final AppRoomDatabase mRoomDB;
+    private final RecipeDao mRecipeDao;
+    private final RecipeApiInterface mRecipeApiInterface;
+    private final AppExecutors mAppExecutors;
 
     public TheRepository(AppExecutors appExecutors,AppRoomDatabase roomDB, RecipeDao recipeDao, RecipeApiInterface recipeApiInterface){
         mAppExecutors = appExecutors;
@@ -97,12 +97,17 @@ public class TheRepository {
     public LiveData<List<RecipeEntity>> getRecipes(){
         return mRecipeDao.loadAllRecipes();
     }
+
     public LiveData<List<StepEntity>> getStepsByRecipeId(int recipeId){
         return mRecipeDao.getStepsByRecipeId(recipeId);
     }
 
     public LiveData<List<IngredientEntity>> getIngredientsByRecipeId(int recipeId){
         return mRecipeDao.getIngredientsByRecipeId(recipeId);
+    }
+
+    public LiveData<StepEntity> getStepByItsId(int stepId){
+        return mRecipeDao.getStepByStepId(stepId);
     }
     private void addRecipesEntityFromResponse(List<RecipeResponse> recipeResponses){
 

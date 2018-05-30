@@ -39,14 +39,20 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
     public abstract LiveData<List<IngredientEntity>> getIngredientsByRecipeId(int id);
 
+    @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
+    public abstract List<IngredientEntity> getIngredientsListByRecipeId(int id);
+
  @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
  public abstract IngredientEntity getIngredientByRecipeId(int id);
 
     @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
     public abstract LiveData<List<StepEntity>> getStepsByRecipeId(int id);
 
+    @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
+    public abstract List<StepEntity> getStepsListByRecipeId(int id);
+
     @Query("SELECT * FROM StepEntity WHERE id = :id")
-    public abstract StepEntity getStepByStepId(int id);
+    public abstract LiveData<StepEntity> getStepByStepId(int id);
 
 
 }

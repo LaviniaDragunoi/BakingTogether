@@ -85,7 +85,7 @@ public class RecipesFragment extends Fragment {
                recipesAdapter = new RecipesAdapter(getContext(),recipeEntities);
                showData();
                recipesRW.setAdapter(recipesAdapter);
-           }else if(recipeEntities != null){
+           }else if(recipeEntities == null){
                errorMessage.setVisibility(View.VISIBLE);
 
            }
@@ -94,12 +94,11 @@ public class RecipesFragment extends Fragment {
     }
     private void isLoadingData(){
         recipesPB.setVisibility(View.VISIBLE);
-        errorMessage.setVisibility(View.GONE);
         recipesRW.setVisibility(View.GONE);
     }
     private void showData(){
-        recipesPB.setVisibility(View.GONE);
+        recipesPB.setVisibility(View.INVISIBLE);
         recipesRW.setVisibility(View.VISIBLE);
-        errorMessage.setVisibility(View.GONE);
+        errorMessage.setVisibility(View.INVISIBLE);
     }
 }

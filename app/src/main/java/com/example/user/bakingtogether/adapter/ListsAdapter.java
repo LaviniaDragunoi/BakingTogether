@@ -92,7 +92,7 @@ this.context = context;
                 public void onClick(View v) {
 
                         Intent stepIntent = new Intent(vh2.itemView.getContext(), StepActivity.class);
-                        stepIntent.putExtra("CurrentStep", step);
+                        stepIntent.putExtra("CurrentStep", step.getId());
                     vh2.itemView.getContext().startActivity(stepIntent);
 
                 }

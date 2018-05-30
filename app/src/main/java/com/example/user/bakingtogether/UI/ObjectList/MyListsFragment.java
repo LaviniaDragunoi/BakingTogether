@@ -1,9 +1,7 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
-import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
@@ -13,7 +11,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
@@ -21,7 +18,6 @@ import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.TheRepository;
-import com.example.user.bakingtogether.UI.StepActivity;
 import com.example.user.bakingtogether.ViewModel.DetailsActivityViewModel;
 import com.example.user.bakingtogether.ViewModel.DetailsViewModelFactory;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
@@ -40,53 +36,37 @@ public class MyListsFragment extends Fragment {
     private Context mContext;
     ListsAdapter objectAdapter;
     private AppRoomDatabase roomDB;
-    private int recipeIdIngredients, recipeIdSteps;
+    private int recipeId;
     private DetailsActivityViewModel mViewModel;
     private ArrayList<Parcelable> objectIngredientsList, objectStepsList;
     private TheRepository repository;
     private DetailsViewModelFactory mDetailsViewModelFactory;
+  //  OnListClickListener mCallback;
 
-    public MyListsFragment(){
-
+   /* public interface OnListClickListener{
+        void onOptionSelected(int recipeId);
     }
     @Override
-    public View onCreateView (LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState){
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try {
+            mCallback = (OnListClickListener) context;
+        }catch (ClassCastException e){
+            throw new ClassCastException(context.toString());
+        }
+    }*/
+    public MyListsFragment() {
+
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle saveInstanceState) {
         View rootView = inflater.inflate(R.layout.object_list_fragment, container, false);
         ButterKnife.bind(this, rootView);
-        Bundle bundle = getArguments();
-        if(bundle != null){
-        recipeIdIngredients = bundle.getInt("CurrentRecipeIdForIngredient");
-        recipeIdSteps = bundle.getInt("CurrentRecipeIdForSteps");}
 
-        RecyclerView.LayoutManager layoutManagerReviews = new
-                LinearLayoutManager(mContext);
-        objectListRV.setLayoutManager(layoutManagerReviews);
-
-        //view model
-        roomDB = AppRoomDatabase.getsInstance(getContext());
-        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
-                roomDB,roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
-        if(recipeIdIngredients !=  0) {
-            mDetailsViewModelFactory = new DetailsViewModelFactory(repository, recipeIdIngredients);
-            mViewModel = ViewModelProviders.of(this, mDetailsViewModelFactory).get(DetailsActivityViewModel.class);
-
-            mViewModel.getmIngredientsList().observe(this, ingredientEntityList -> {
-                if (ingredientEntityList != null) {
-
-                    bindDataToAdapter(convertIngredientListToObjectList(ingredientEntityList));
-                }
-            });
-        }
-        if(recipeIdSteps != 0) {
-            mDetailsViewModelFactory = new DetailsViewModelFactory(repository, recipeIdSteps);
-            mViewModel = ViewModelProviders.of(this, mDetailsViewModelFactory).get(DetailsActivityViewModel.class);
-            mViewModel.getmStepsList().observe(this, stepEntityList -> {
-                if (stepEntityList != null) {
-
-                    bindDataToAdapter(convertStepsListToObjectList(stepEntityList));
-                }
-            });
-        }
+            RecyclerView.LayoutManager layoutManagerReviews = new
+                    LinearLayoutManager(mContext);
+            objectListRV.setLayoutManager(layoutManagerReviews);
 
         return rootView;
     }
@@ -101,9 +81,11 @@ public class MyListsFragment extends Fragment {
 
 
 
-    public void bindDataToAdapter(List<Object> objectList) {
-        // Bind adapter to recycler view object
+        public void bindDataToAdapter (List<Object> objectList) {
+            // Bind adapter to recycler view object
 
-        objectListRV.setAdapter(new ListsAdapter(mContext,objectList));
+            objectListRV.setAdapter(new ListsAdapter(mContext, objectList));
+        }
+
+
     }
-}

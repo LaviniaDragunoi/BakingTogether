@@ -1,48 +1,33 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
-import android.annotation.SuppressLint;
-import android.graphics.BitmapFactory;
-import android.net.Uri;
+
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
+import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
+import com.example.user.bakingtogether.TheRepository;
 import com.example.user.bakingtogether.UI.StepActivity;
-import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.DefaultRenderersFactory;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.LoadControl;
+import com.example.user.bakingtogether.ViewModel.StepActivityViewModel;
+import com.example.user.bakingtogether.ViewModel.StepViewModelFactory;
+import com.example.user.bakingtogether.data.ApiUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ExtractorMediaSource;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.PlayerView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
-import com.google.android.exoplayer2.util.Util;
-import com.squareup.picasso.Picasso;
-
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import retrofit2.http.Url;
 
 
 public class StepFragment extends Fragment {
@@ -66,7 +51,9 @@ public class StepFragment extends Fragment {
     public boolean playWhenReady;
     public long playBackPosition;
     public int currentWindow;
-
+    private TheRepository repository;
+    private StepViewModelFactory mStepViewModelFactory;
+    private StepActivityViewModel mViewModel;
 
     public StepFragment(){}
 
@@ -75,55 +62,34 @@ public class StepFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
         ButterKnife.bind(this, rootView);
-        roomDB = AppRoomDatabase.getsInstance(getContext());
         Bundle bundle = getArguments();
-        currentStep = bundle.getParcelable("CurrentStep");
-        stepsList = (List<StepEntity>) roomDB.recipeDao().getStepsByRecipeId(currentStep.getRecipeId());
-        stepId = currentStep.getId();
-        populateUI(stepId);
-
-        nextFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stepId++;
-                if(stepId == (stepsList.get(stepsList.size() -1).getId()));{
-                populateUI(stepId);
-                }
-            }
-        });
-        previousFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                stepId--;
-                populateUI(stepId);
-            }
-        });
+            currentStep = bundle.getParcelable("CurrentStep");
 
 
         return rootView;
     }
 
-    public void populateUI(int stepId){
-        currentStep = roomDB.recipeDao().getStepByStepId(stepId);
+    public void populateUI(StepEntity currentStep) {
         stepDescription.setText(currentStep.getDescription());
-
+        int stepId = currentStep.getId();
         ((StepActivity) getActivity())
                 .setActionBarTitle(currentStep.getShortDescription());
-        if (stepId == stepsList.get(0).getId()) {
+        /*if (mViewModel.isFirst()) {
 
             previousFAB.setVisibility(View.GONE);
             nextFAB.setVisibility(View.VISIBLE);
 
 
-        } else{ if (stepId == (stepsList.get(stepsList.size() - 1).getId())) {
+        } else {
+            if (mViewModel.isLast()) {
 
-            previousFAB.setVisibility(View.VISIBLE);
-            nextFAB.setVisibility(View.GONE);
+                previousFAB.setVisibility(View.VISIBLE);
+                nextFAB.setVisibility(View.GONE);
 
-        }else {
-            previousFAB.setVisibility(View.VISIBLE);
-            nextFAB.setVisibility(View.VISIBLE);
-        }
+            } else {
+                previousFAB.setVisibility(View.VISIBLE);
+                nextFAB.setVisibility(View.VISIBLE);
+            }
         }
       /*  if(!TextUtils.isEmpty(currentStep.getVideoURL()) || !(currentStep.getVideoURL().equals(""))){
             imageViewLogo.setVisibility(View.GONE);
@@ -136,8 +102,8 @@ public class StepFragment extends Fragment {
         }else {
             playerView.setVisibility(View.GONE);
             Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
-        }*/
-    }
+        }
+    }*/
     
   /*  public void initializePlayer(Uri mediaUri){
         if(player == null){
@@ -188,4 +154,4 @@ public class StepFragment extends Fragment {
 */
 
 
-}
+    }}
