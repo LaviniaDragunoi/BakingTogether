@@ -92,7 +92,9 @@ this.context = context;
                 public void onClick(View v) {
 
                         Intent stepIntent = new Intent(vh2.itemView.getContext(), StepActivity.class);
-                        stepIntent.putExtra("CurrentStep", step.getId());
+                        stepIntent.putExtra("CurrentStep", step.getId())
+                        .putExtra("CurrentRecipe", step.getRecipeId())
+                        .putExtra("StepsList",new ArrayList<>(objectList));
                     vh2.itemView.getContext().startActivity(stepIntent);
 
                 }

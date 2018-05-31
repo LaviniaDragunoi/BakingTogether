@@ -41,20 +41,7 @@ public class MyListsFragment extends Fragment {
     private ArrayList<Parcelable> objectIngredientsList, objectStepsList;
     private TheRepository repository;
     private DetailsViewModelFactory mDetailsViewModelFactory;
-  //  OnListClickListener mCallback;
 
-   /* public interface OnListClickListener{
-        void onOptionSelected(int recipeId);
-    }
-    @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        try {
-            mCallback = (OnListClickListener) context;
-        }catch (ClassCastException e){
-            throw new ClassCastException(context.toString());
-        }
-    }*/
     public MyListsFragment() {
 
     }

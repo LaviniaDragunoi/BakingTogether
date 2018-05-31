@@ -35,10 +35,6 @@ public class DetailsActivity extends AppCompatActivity {
     private ListsAdapter objectAdapter;
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
-    @BindView(R.id.clear_ingredients)
-    Button clearIngredients;
-    @BindView(R.id.clear_steps)
-    Button clearSteps;
     private AppRoomDatabase roomDB;
     private static final String TAG = DetailsActivity.class.getSimpleName();
     private ArrayList<IngredientEntity> ingredientEntities;
@@ -53,8 +49,6 @@ public class DetailsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_details);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-
-
 
 
         roomDB = AppRoomDatabase.getsInstance(this);

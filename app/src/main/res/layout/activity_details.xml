@@ -24,14 +24,7 @@
     android:id="@+id/ingredients_list"
     android:layout_height="wrap_content"
     android:layout_width="match_parent"/>
-    <Button
-        android:id="@+id/clear_ingredients"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear all"
-        android:textColor="@color/colorAccent"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/singleColor"/>
+
 
     <View
         android:layout_width="match_parent"
@@ -54,13 +47,6 @@
         android:id="@+id/steps_list"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"/>
-    <Button
-        android:id="@+id/clear_steps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Clear all"
-        android:textColor="@color/colorAccent"
-        android:layout_gravity="center_horizontal"
-        android:backgroundTint="@color/singleColor"/>
+
 </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

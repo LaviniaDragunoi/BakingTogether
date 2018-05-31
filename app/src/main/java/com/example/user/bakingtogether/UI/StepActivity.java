@@ -3,13 +3,15 @@ package com.example.user.bakingtogether.UI;
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
+import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
@@ -21,89 +23,88 @@ import com.example.user.bakingtogether.ViewModel.StepActivityViewModel;
 import com.example.user.bakingtogether.ViewModel.StepViewModelFactory;
 import com.example.user.bakingtogether.data.ApiUtils;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.util.Util;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class StepActivity extends AppCompatActivity {
 
-    private AppRoomDatabase roomDB;
-    StepEntity currentStep;
-
+    private static final int DEFAULT_VALUE = -1;
     @BindView(R.id.previous_fab)
     FloatingActionButton previousFAB;
     @BindView(R.id.next_fab)
     FloatingActionButton nextFAB;
-
-    private List<StepEntity> stepsList;
     private int stepId;
-    public SimpleExoPlayer player;
-    public boolean playWhenReady;
-    public long playBackPosition;
-    public int currentWindow;
+    private int recipeId;
     private TheRepository repository;
-    private StepViewModelFactory mStepViewModelFactory;
+    List<StepEntity> stepsList;
+    private AppRoomDatabase roomDB;
+    private final static  String TAG = StepActivity.class.getSimpleName();
     private StepActivityViewModel mViewModel;
-
+    private StepViewModelFactory mStepFactory;
+    private StepEntity currentStep;
+    private StepFragment stepFragment;
 
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_step);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
 
-        StepFragment stepFragment = new StepFragment();
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         roomDB = AppRoomDatabase.getsInstance(this);
-        Intent intent = getIntent();
-        int stepId = intent.getIntExtra("CurrentStep", -1);
         repository = TheRepository.getsInstance(AppExecutors.getInstance(),
                 roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
 
-        mStepViewModelFactory = new StepViewModelFactory(repository);
-        mViewModel = ViewModelProviders.of(this, mStepViewModelFactory).get(StepActivityViewModel.class);
-       if(stepId != -1){
-           mViewModel.setmStepId(stepId);
+        Intent intent = getIntent();
+        stepId = intent.getIntExtra("CurrentStep", DEFAULT_VALUE);
+        recipeId = intent.getIntExtra("CurrentRecipe", DEFAULT_VALUE);
+        stepsList = intent.getParcelableArrayListExtra("StepsList");
+        if ( stepId != DEFAULT_VALUE && recipeId != DEFAULT_VALUE){
+            mStepFactory = new StepViewModelFactory(repository,recipeId, stepId);
         }
 
+         stepFragment = new StepFragment();
 
-        mViewModel.getStepDetails().observe(this, stepEntity -> {
-            if( stepEntity != null ){
+        mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
+        mViewModel.getStep().observe(this, stepEntity -> {
+            if(stepEntity != null){
+                currentStep = new StepEntity(stepEntity.getId(),stepEntity.getRecipeId(),
+                        stepEntity.getShortDescription(), stepEntity.getDescription(),
+                        stepEntity.getVideoURL(), stepEntity.getThumbnailURL());
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("CurrentStepDetails", currentStep);
+                ArrayList<StepEntity> steps = new ArrayList<>(stepsList);
+                bundle.putParcelableArrayList("StepListCurrent", steps);
+                stepFragment.setArguments(bundle);
                 stepFragment.populateUI(stepEntity);
-                if (mViewModel.isFirst()) {
-                    previousFAB.setVisibility(View.GONE);
-                    nextFAB.setVisibility(View.VISIBLE);
-                } else {
-                    if (mViewModel.isLast()) {
-                        previousFAB.setVisibility(View.VISIBLE);
-                        nextFAB.setVisibility(View.GONE);
-                        } else {
-                        previousFAB.setVisibility(View.VISIBLE);
-                        nextFAB.setVisibility(View.VISIBLE);
-                    }
-                }
-                nextFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mViewModel.getNext();
-                        stepFragment.populateUI(stepEntity);
-                    }
-                });
-                previousFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        mViewModel.getPrevious();
-                        stepFragment.populateUI(stepEntity);
-                    }
-                });
+//               if (stepId != stepsList.get(0).getId() &&
+//                       stepId != stepsList.get(stepsList.size()-1).getId()) {
+//                    previousFAB.setVisibility(View.VISIBLE);
+//                    nextFAB.setVisibility(View.VISIBLE);
+//                } else {
+//                    if (stepId == stepsList.get(0).getId() &&
+//                            stepId != stepsList.get(stepsList.size()-1).getId()) {
+//                        previousFAB.setVisibility(View.GONE);
+//                        nextFAB.setVisibility(View.VISIBLE);
+//                    } else if(stepEntity.getId() != stepsList.get(0).getId() &&
+//                            stepEntity.getId() == stepsList.get(stepsList.size()-1).getId()) {
+//                        previousFAB.setVisibility(View.VISIBLE);
+//                        nextFAB.setVisibility(View.GONE);
+//                    }
+//                }
+
+
 
             }
         });
-        Bundle stepBundle = new Bundle();
-        stepBundle.putParcelable("CurrentStep", currentStep);
-        stepFragment.setArguments(stepBundle);
+
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -125,4 +126,6 @@ public class StepActivity extends AppCompatActivity {
     public void setActionBarTitle(String title) {
         getSupportActionBar().setTitle(title);
     }
+
+
 }

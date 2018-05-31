@@ -25,12 +25,23 @@
                 android:name="android:suport.PARENT_ACTIVITY"
                 android:value=".UI.MainActivity" />
         </activity>
-        <activity android:name=".UI.StepActivity"
+        <activity
+            android:name=".UI.StepActivity"
             android:parentActivityName=".UI.DetailsActivity">
             <meta-data
                 android:name="android:suport.PARENT_ACTIVITY"
                 android:value=".UI.DetailsActivity" />
         </activity>
+
+        <receiver android:name=".IngredientsWidgetProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/ingredients_widget_provider_info" />
+        </receiver>
     </application>
 
 </manifest>

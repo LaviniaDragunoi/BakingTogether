@@ -1,22 +1,23 @@
 package com.example.user.bakingtogether.ViewModel;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProvider;
-import android.support.annotation.NonNull;
 
 import com.example.user.bakingtogether.TheRepository;
 
 public class StepViewModelFactory extends ViewModelProvider.NewInstanceFactory {
-    private TheRepository mRepository;
+    private TheRepository repository;
+    private Integer recipeId;
+    private Integer stepId;
 
-    public StepViewModelFactory(TheRepository repository){
-        this.mRepository = repository;
+    public StepViewModelFactory(TheRepository repository, Integer recipeId, Integer stepId){
+        this.repository = repository;
+        this.recipeId = recipeId;
+        this.stepId = stepId;
     }
 
-    @NonNull
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass){
-        return (T) new StepActivityViewModel(mRepository);
+        return (T) new StepActivityViewModel(repository, recipeId, stepId);
     }
 }

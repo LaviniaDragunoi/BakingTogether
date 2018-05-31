@@ -16,7 +16,6 @@ import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
 
-AppRoomDatabase roomDB;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
