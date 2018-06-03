@@ -7,6 +7,7 @@ import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.TheRepository;
 
+import java.util.Collections;
 import java.util.List;
 
 public class StepActivityViewModel extends ViewModel {
@@ -52,24 +53,16 @@ public class StepActivityViewModel extends ViewModel {
     }
 
 
-//    public Boolean isNotLast(){ //daca este true atunci arat butonul next in stepActivity
-//        //daca este false (adica mStepId este mai mare sau egal cu marimea listei atunci nu arat butonul next
-//        return mStepId < mStepsList.getValue().size();
-//    }
-//
-//    public Boolean isNotFirst(){
-//        //daca mStepId este mai mic sau egal cu 0 atunci nu mai arata privious button
-//        return mStepId > 0;
-//    }
-
-
-    public void setNextId(){
+    public StepEntity setNextId(){
         mStepId = mStepId++;
         setStepId(mStepId);
-        mRepository.getStepByItsId(mStepId);
+        return mRepository.getStepByItsId(mStepId).getValue();
     }
 
-    public void setPreviousId(){
+    public StepEntity setPreviousId(){
+
         mStepId= mStepId--;
+        setStepId(mStepId);
+        return mRepository.getStepByItsId(mStepId).getValue();
     }
 }

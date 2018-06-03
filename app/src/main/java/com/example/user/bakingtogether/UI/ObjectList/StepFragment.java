@@ -1,7 +1,9 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
 
+import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -36,6 +38,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -67,57 +70,50 @@ public class StepFragment extends Fragment {
     private StepViewModelFactory mStepFactory;
 
 
+    private OnButtonClickListener mCallback;
+    private int first,last;
+
+    public interface OnButtonClickListener{
+        void  onButtonSelected(int stepId);
+    }
+    public void setOnButtonClickListener(OnButtonClickListener listener) {
+        mCallback = listener;
+    }
+
+  /*  @Override
+    public void onAttach(Context context){
+        super.onAttach(context);
+        try {
+            mCallback = (OnButtonClickListener) context;
+        }catch ( ClassCastException e){
+            throw new ClassCastException(context.toString() +
+                    "must implement OnButtonCLickListener");
+        }
+    }*/
+
     public StepFragment(){}
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
         Bundle bundle = getArguments();
         if(bundle != null){
         currentStep = bundle.getParcelable("CurrentStepDetails");
-        stepListCurrent = bundle.getParcelable("StepListCurrent");
-     }
-//        roomDB = AppRoomDatabase.getsInstance(getContext());
-//        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
-//                roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
-//        mStepFactory = new StepViewModelFactory(repository,currentStep.getRecipeId(), currentStep.getId());
-//        mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
-//        if (currentStep.getId() != stepListCurrent.get(0).getId() &&
-//                currentStep.getId() != stepListCurrent.get(stepListCurrent.size()-1).getId()) {
-//            previousFAB.setVisibility(View.VISIBLE);
-//            nextFAB.setVisibility(View.VISIBLE);
-//        } else {
-//            if (currentStep.getId() == stepListCurrent.get(0).getId() &&
-//                    currentStep.getId() != stepListCurrent.get(stepListCurrent.size()-1).getId()) {
-//                previousFAB.setVisibility(View.GONE);
-//                nextFAB.setVisibility(View.VISIBLE);
-//            } else if(currentStep.getId() != stepListCurrent.get(0).getId() &&
-//                    currentStep.getId() == stepListCurrent.get(stepListCurrent.size()-1).getId()) {
-//                previousFAB.setVisibility(View.VISIBLE);
-//                nextFAB.setVisibility(View.GONE);
-//            }
-//        }
-        nextFAB.setOnClickListener( (View view) -> {
-            mViewModel.setNextId();
-            currentStep = mViewModel.getStep().getValue();
-            populateUI(currentStep);
-        });
+        first = bundle.getInt("First");
+        last = bundle.getInt("Last");
+        }
 
-      /*  previousFAB.setOnClickListener((View view) ->{
-            mViewModel.setPreviousId();
-            populateUI(currentStep);
-        });*/
 
-              return rootView;
-
+        return rootView;
     }
 
-    public void populateUI(StepEntity step){
+    public void populateUI(StepEntity step, int firstStep, int lastStep){
             stepDescription.setText(step.getDescription());
-            ((StepActivity) getActivity())
+            ((StepActivity) Objects.requireNonNull(getActivity()))
                     .setActionBarTitle(step.getShortDescription());
        if(!TextUtils.isEmpty(step.getVideoURL()) || !(step.getVideoURL().equals(""))){
             imageViewLogo.setVisibility(View.GONE);
@@ -129,6 +125,34 @@ public class StepFragment extends Fragment {
             playerView.setVisibility(View.GONE);
             imageViewLogo.setVisibility(View.VISIBLE);
            Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
+        }
+
+        nextFAB.setOnClickListener((View view) -> {
+            int stepId = step.getId();
+            stepId++;
+            mCallback.onButtonSelected(stepId);
+        });
+        previousFAB.setOnClickListener((View view) -> {
+            int stepId = step.getId();
+            stepId--;
+            mCallback.onButtonSelected(stepId);
+        });
+
+
+        if (step.getId() != firstStep &&
+                step.getId() != lastStep) {
+            previousFAB.setVisibility(View.VISIBLE);
+            nextFAB.setVisibility(View.VISIBLE);
+        } else {
+            if (step.getId() == firstStep &&
+                    step.getId() != lastStep) {
+                previousFAB.setVisibility(View.GONE);
+                nextFAB.setVisibility(View.VISIBLE);
+            } else if(step.getId() != firstStep &&
+                    step.getId() == lastStep) {
+                previousFAB.setVisibility(View.VISIBLE);
+                nextFAB.setVisibility(View.GONE);
+            }
         }
 
 
@@ -150,13 +174,22 @@ public class StepFragment extends Fragment {
 
         }
     }
-//   @Override
-//    public void onStart() {
-//        super.onStart();
-////        if(Util.SDK_INT > 23){
-////            initializePlayer(Uri.parse(currentStep.getVideoURL()));
-////        }
-//    }
+   @Override
+    public void onStart() {
+        super.onStart();
+//       if(is){
+//           if(!TextUtils.isEmpty(currentStep.getVideoURL()) || !(currentStep.getVideoURL().equals(""))) {
+//               initializePlayer(Uri.parse(currentStep.getVideoURL()));
+//           } else if(!TextUtils.isEmpty(currentStep.getThumbnailURL())|| !(currentStep.getThumbnailURL().equals(""))){
+//               imageViewLogo.setVisibility(View.GONE);
+//               initializePlayer(Uri.parse(currentStep.getThumbnailURL()));
+//           }else {
+//               playerView.setVisibility(View.GONE);
+//               imageViewLogo.setVisibility(View.VISIBLE);
+//               Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
+//           }
+
+    }
     @Override
     public void onPause() {
         super.onPause();

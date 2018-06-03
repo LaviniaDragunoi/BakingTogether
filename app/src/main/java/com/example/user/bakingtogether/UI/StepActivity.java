@@ -1,6 +1,7 @@
 package com.example.user.bakingtogether.UI;
 
 import android.annotation.SuppressLint;
+import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
@@ -32,23 +33,23 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StepActivity extends AppCompatActivity {
+public class StepActivity extends AppCompatActivity implements StepFragment.OnButtonClickListener{
 
     private static final int DEFAULT_VALUE = -1;
     @BindView(R.id.previous_fab)
     FloatingActionButton previousFAB;
     @BindView(R.id.next_fab)
     FloatingActionButton nextFAB;
-    private int stepId;
-    private int recipeId;
-    private TheRepository repository;
     List<StepEntity> stepsList;
-    private AppRoomDatabase roomDB;
     private final static  String TAG = StepActivity.class.getSimpleName();
     private StepActivityViewModel mViewModel;
     private StepViewModelFactory mStepFactory;
     private StepEntity currentStep;
     private StepFragment stepFragment;
+    private int lastStepId, firstStepId;
+    private int stepId;
+    private TheRepository repository;
+    private int recipeId;
 
     @SuppressLint("NewApi")
     @Override
@@ -57,7 +58,7 @@ public class StepActivity extends AppCompatActivity {
         setContentView(R.layout.activity_step);
 
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        roomDB = AppRoomDatabase.getsInstance(this);
+        AppRoomDatabase roomDB = AppRoomDatabase.getsInstance(this);
         repository = TheRepository.getsInstance(AppExecutors.getInstance(),
                 roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
 
@@ -66,11 +67,12 @@ public class StepActivity extends AppCompatActivity {
         recipeId = intent.getIntExtra("CurrentRecipe", DEFAULT_VALUE);
         stepsList = intent.getParcelableArrayListExtra("StepsList");
         if ( stepId != DEFAULT_VALUE && recipeId != DEFAULT_VALUE){
-            mStepFactory = new StepViewModelFactory(repository,recipeId, stepId);
+            mStepFactory = new StepViewModelFactory(repository, recipeId, stepId);
         }
 
          stepFragment = new StepFragment();
-
+        firstStepId = stepsList.get(0).getId();
+        lastStepId = stepsList.get(stepsList.size()-1).getId();
         mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
         mViewModel.getStep().observe(this, stepEntity -> {
             if(stepEntity != null){
@@ -80,30 +82,17 @@ public class StepActivity extends AppCompatActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putParcelable("CurrentStepDetails", currentStep);
-                ArrayList<StepEntity> steps = new ArrayList<>(stepsList);
-                bundle.putParcelableArrayList("StepListCurrent", steps);
+                bundle.putInt("First", firstStepId);
+                bundle.putInt("Last", lastStepId);
+
                 stepFragment.setArguments(bundle);
-                stepFragment.populateUI(stepEntity);
-//               if (stepId != stepsList.get(0).getId() &&
-//                       stepId != stepsList.get(stepsList.size()-1).getId()) {
-//                    previousFAB.setVisibility(View.VISIBLE);
-//                    nextFAB.setVisibility(View.VISIBLE);
-//                } else {
-//                    if (stepId == stepsList.get(0).getId() &&
-//                            stepId != stepsList.get(stepsList.size()-1).getId()) {
-//                        previousFAB.setVisibility(View.GONE);
-//                        nextFAB.setVisibility(View.VISIBLE);
-//                    } else if(stepEntity.getId() != stepsList.get(0).getId() &&
-//                            stepEntity.getId() == stepsList.get(stepsList.size()-1).getId()) {
-//                        previousFAB.setVisibility(View.VISIBLE);
-//                        nextFAB.setVisibility(View.GONE);
-//                    }
-//                }
+                stepFragment.populateUI(stepEntity, firstStepId, lastStepId);
 
 
 
             }
         });
+
 
 
         FragmentManager fragmentManager = getSupportFragmentManager();
@@ -124,8 +113,39 @@ public class StepActivity extends AppCompatActivity {
     }
 
     public void setActionBarTitle(String title) {
-        getSupportActionBar().setTitle(title);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
     }
 
 
+    @Override
+    public void onButtonSelected(int stepId) {
+        mStepFactory = new StepViewModelFactory(repository, recipeId, stepId);
+        mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
+        mViewModel.getStep().observe(this, stepEntity ->{
+            if(stepEntity != null) {
+                StepEntity step = new StepEntity(stepEntity.getId(), stepEntity.getRecipeId(),
+                        stepEntity.getShortDescription(), stepEntity.getDescription(),
+                        stepEntity.getVideoURL(), stepEntity.getThumbnailURL());
+               Bundle bundle = new Bundle();
+                bundle.putParcelable("CurrentStepDetails", step);
+                bundle.putInt("First", firstStepId);
+                bundle.putInt("Last", lastStepId);
+                nextFAB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        stepFragment.setArguments(bundle);
+                    stepFragment.populateUI(step, firstStepId, lastStepId);
+                }});
+                previousFAB.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        stepFragment.setArguments(bundle);
+                        stepFragment.populateUI(step, firstStepId, lastStepId);
+                    }
+                });
+
+            }
+        });
+    }
 }
