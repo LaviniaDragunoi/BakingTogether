@@ -2,8 +2,10 @@ package com.example.user.bakingtogether.UI.ObjectList;
 
 
 import android.app.Activity;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -70,28 +72,19 @@ public class StepFragment extends Fragment {
     private StepViewModelFactory mStepFactory;
 
 
-    private OnButtonClickListener mCallback;
-    private int first,last;
+       private int first,last;
 
-    public interface OnButtonClickListener{
-        void  onButtonSelected(int stepId);
-    }
-    public void setOnButtonClickListener(OnButtonClickListener listener) {
-        mCallback = listener;
-    }
 
-  /*  @Override
-    public void onAttach(Context context){
-        super.onAttach(context);
-        try {
-            mCallback = (OnButtonClickListener) context;
-        }catch ( ClassCastException e){
-            throw new ClassCastException(context.toString() +
-                    "must implement OnButtonCLickListener");
-        }
-    }*/
 
     public StepFragment(){}
+
+//    @Override
+//    public void onCreate(@Nullable Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        if(savedInstanceState != null){
+//
+//        }
+//    }
 
     @Nullable
     @Override
@@ -100,18 +93,26 @@ public class StepFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        Bundle bundle = getArguments();
-        if(bundle != null){
-        currentStep = bundle.getParcelable("CurrentStepDetails");
-        first = bundle.getInt("First");
-        last = bundle.getInt("Last");
+//        if(savedInstanceState != null){
+//        currentStep = getArguments().getParcelable("CurrentStepDetails");
+//        first = getArguments().getInt("First");
+//        last = getArguments().getInt("Last");
+//        }
+        mViewModel = ViewModelProviders.of(getActivity()).get(StepActivityViewModel.class);
+mViewModel.mStepId.observe(getActivity(), new Observer<Integer>() {
+    @Override
+    public void onChanged(@Nullable Integer integer) {
+        if(integer != null){
+          //  populateUI(mViewModel.getStep().getValue(),first,last);
         }
-
+    }
+});
 
         return rootView;
     }
 
     public void populateUI(StepEntity step, int firstStep, int lastStep){
+
             stepDescription.setText(step.getDescription());
             ((StepActivity) Objects.requireNonNull(getActivity()))
                     .setActionBarTitle(step.getShortDescription());
@@ -126,16 +127,33 @@ public class StepFragment extends Fragment {
             imageViewLogo.setVisibility(View.VISIBLE);
            Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
         }
-
-        nextFAB.setOnClickListener((View view) -> {
-            int stepId = step.getId();
-            stepId++;
-            mCallback.onButtonSelected(stepId);
+        nextFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.mStepId.setValue(step.getId() + 1);
+                mViewModel.setStepId(step.getId()+1);
+                Intent intent  = new Intent(getContext(), StepActivity.class);
+                intent.putExtra("NewStepId", mViewModel.getStepId().getValue());
+                intent.putExtra("FirstStepId", firstStep);
+                intent.putExtra("LastStepId", lastStep);
+                intent.putExtra("RecipeId", step.getRecipeId());
+                player.stop();
+                startActivity(intent);
+            }
         });
-        previousFAB.setOnClickListener((View view) -> {
-            int stepId = step.getId();
-            stepId--;
-            mCallback.onButtonSelected(stepId);
+        previousFAB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mViewModel.mStepId.setValue(step.getId() - 1);
+                mViewModel.setStepId(step.getId()-1);
+                Intent intent  = new Intent(getContext(), StepActivity.class);
+                intent.putExtra("NewStepId", mViewModel.getStepId().getValue());
+                intent.putExtra("FirstStepId", firstStep);
+                intent.putExtra("LastStepId", lastStep);
+                intent.putExtra("RecipeId", step.getRecipeId());
+                player.stop();
+                startActivity(intent);
+            }
         });
 
 

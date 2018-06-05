@@ -1,6 +1,7 @@
 package com.example.user.bakingtogether.ViewModel;
 
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.example.user.bakingtogether.DB.RecipeDetails;
@@ -12,7 +13,7 @@ import java.util.List;
 
 public class StepActivityViewModel extends ViewModel {
     private Integer mRecipeId;
-    private Integer mStepId;
+    public MutableLiveData<Integer> mStepId = new MutableLiveData<>();
     private LiveData<RecipeDetails> mRecipeDetails;
     private TheRepository mRepository;
     private LiveData<List<StepEntity>> mStepsList;
@@ -21,18 +22,18 @@ public class StepActivityViewModel extends ViewModel {
     public StepActivityViewModel(TheRepository repository, Integer recipeId, Integer stepId){
         mRepository = repository;
         mRecipeId = recipeId;
-        mStepId = stepId;
+        mStepId.setValue(stepId);
         mRecipeDetails = mRepository.getRecipeById(recipeId);
         mStepsList = mRepository.getStepsByRecipeId(recipeId);
         mStep = mRepository.getStepByItsId(stepId);
     }
 
-    public Integer getStepId() {
+    public MutableLiveData<Integer> getStepId() {
         return mStepId;
     }
 
     public void setStepId(Integer stepId) {
-        this.mStepId = stepId;
+        this.mStepId.postValue(stepId);
     }
 
     public LiveData<List<StepEntity>> getStepsList() {
@@ -47,22 +48,26 @@ public class StepActivityViewModel extends ViewModel {
     public LiveData<StepEntity> getStep() {
         return mStep;
     }
+    public StepEntity getStepByItsOwnId(Integer stepId){
+        return mRepository.getStepByItsId(stepId).getValue();
+    }
 
-    public void setStep(LiveData<StepEntity> step) {
-        this.mStep = step;
+    public void setStep(Integer stepId) {
+        this.mStep = mRepository.getStepByItsId(stepId);
     }
 
 
-    public StepEntity setNextId(){
-        mStepId = mStepId++;
-        setStepId(mStepId);
-        return mRepository.getStepByItsId(mStepId).getValue();
-    }
 
-    public StepEntity setPreviousId(){
-
-        mStepId= mStepId--;
-        setStepId(mStepId);
-        return mRepository.getStepByItsId(mStepId).getValue();
-    }
+//    public StepEntity setNextId(){
+//        mStepId = mStepId++;
+//        setStepId(mStepId);
+//        return mRepository.getStepByItsId(mStepId).getValue();
+//    }
+//
+//    public StepEntity setPreviousId(){
+//
+//        mStepId= mStepId--;
+//        setStepId(mStepId);
+//        return mRepository.getStepByItsId(mStepId).getValue();
+//    }
 }

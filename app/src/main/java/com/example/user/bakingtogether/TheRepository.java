@@ -48,7 +48,7 @@ public class TheRepository {
     }
 
     public LiveData<List<RecipeEntity>> getInitialRecipeList(){
-        MediatorLiveData<List<RecipeEntity>> mainRecipeList = new MediatorLiveData<>();
+        final MediatorLiveData<List<RecipeEntity>> mainRecipeList = new MediatorLiveData<>();
         LiveData<List<RecipeEntity>> recipesDB = mRecipeDao.loadAllRecipes();
         mainRecipeList.addSource(recipesDB, newRecipes ->{
             if(mainRecipeList.getValue() != newRecipes){
@@ -60,6 +60,7 @@ public class TheRepository {
         retrofitRecipesResponse.observeForever(recipeResponses -> {
             if(recipeResponses != null && recipeResponses.size() > 0){
                 mAppExecutors.networkIO().execute(()-> {
+                    deleteFromDb();
                     addRecipesEntityFromResponse(recipeResponses);
 
                 });
@@ -70,6 +71,10 @@ public class TheRepository {
         return mainRecipeList;
     }
 
+
+    private void deleteFromDb(){
+        mRecipeDao.deleteAll();
+    }
     private LiveData<List<RecipeResponse>> getResponseRecipesRetrofit() {
         MutableLiveData<List<RecipeResponse>> recipeResponse = new MutableLiveData<>();
         mRecipeApiInterface.getRecipeResponse().enqueue(new Callback<List<RecipeResponse>>() {
@@ -109,6 +114,10 @@ public class TheRepository {
     public LiveData<StepEntity> getStepByItsId(int stepId){
         return mRecipeDao.getStepByStepId(stepId);
     }
+
+//    public StepEntity getStepByItsId(MutableLiveData<Integer> mutableStepId) {
+//        return mRecipeDao.getStepByMutableStepId(mutableStepId);
+//    }
     private void addRecipesEntityFromResponse(List<RecipeResponse> recipeResponses){
 
             RecipeEntity  recipeEntity = null;
@@ -143,4 +152,6 @@ public class TheRepository {
         }
 
     }
+
+
 }

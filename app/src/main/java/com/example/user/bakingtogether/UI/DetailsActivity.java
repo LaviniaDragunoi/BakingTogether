@@ -97,8 +97,4 @@ public class DetailsActivity extends AppCompatActivity {
     }
 
 
-private void clearIngredientsList(){
-
-}
-
 }

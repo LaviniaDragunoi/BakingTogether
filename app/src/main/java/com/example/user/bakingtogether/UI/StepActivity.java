@@ -2,10 +2,13 @@ package com.example.user.bakingtogether.UI;
 
 import android.annotation.SuppressLint;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
@@ -33,13 +36,10 @@ import java.util.Objects;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class StepActivity extends AppCompatActivity implements StepFragment.OnButtonClickListener{
+public class StepActivity extends AppCompatActivity{
 
     private static final int DEFAULT_VALUE = -1;
-    @BindView(R.id.previous_fab)
-    FloatingActionButton previousFAB;
-    @BindView(R.id.next_fab)
-    FloatingActionButton nextFAB;
+
     List<StepEntity> stepsList;
     private final static  String TAG = StepActivity.class.getSimpleName();
     private StepActivityViewModel mViewModel;
@@ -47,10 +47,10 @@ public class StepActivity extends AppCompatActivity implements StepFragment.OnBu
     private StepEntity currentStep;
     private StepFragment stepFragment;
     private int lastStepId, firstStepId;
-    private int stepId;
+    private Integer stepId;
     private TheRepository repository;
     private int recipeId;
-
+   private Bundle bundle;
     @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,37 +63,48 @@ public class StepActivity extends AppCompatActivity implements StepFragment.OnBu
                 roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
 
         Intent intent = getIntent();
-        stepId = intent.getIntExtra("CurrentStep", DEFAULT_VALUE);
-        recipeId = intent.getIntExtra("CurrentRecipe", DEFAULT_VALUE);
-        stepsList = intent.getParcelableArrayListExtra("StepsList");
+        if(intent != null) {
+
+            if (intent.hasExtra("CurrentStep")){
+            stepId = intent.getIntExtra("CurrentStep", DEFAULT_VALUE);
+                recipeId = intent.getIntExtra("CurrentRecipe", DEFAULT_VALUE);
+                stepsList = intent.getParcelableArrayListExtra("StepsList");
+                firstStepId = stepsList.get(0).getId();
+                lastStepId = stepsList.get(stepsList.size()-1).getId();
+            }
+            else if(intent.hasExtra("NewStepId")){
+                stepId = intent.getIntExtra("NewStepId", DEFAULT_VALUE);
+                firstStepId = intent.getIntExtra("FirstStepId", DEFAULT_VALUE);
+                lastStepId = intent.getIntExtra("LastStepId", DEFAULT_VALUE);
+                recipeId = intent.getIntExtra("RecipeId", DEFAULT_VALUE);
+            }
+
+
+        }
+
         if ( stepId != DEFAULT_VALUE && recipeId != DEFAULT_VALUE){
             mStepFactory = new StepViewModelFactory(repository, recipeId, stepId);
         }
 
          stepFragment = new StepFragment();
-        firstStepId = stepsList.get(0).getId();
-        lastStepId = stepsList.get(stepsList.size()-1).getId();
+
+        bundle = new Bundle();
+
+
         mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
         mViewModel.getStep().observe(this, stepEntity -> {
             if(stepEntity != null){
-                currentStep = new StepEntity(stepEntity.getId(),stepEntity.getRecipeId(),
-                        stepEntity.getShortDescription(), stepEntity.getDescription(),
-                        stepEntity.getVideoURL(), stepEntity.getThumbnailURL());
 
-                Bundle bundle = new Bundle();
-                bundle.putParcelable("CurrentStepDetails", currentStep);
+                bundle.putParcelable("CurrentStepDetails", stepEntity);
                 bundle.putInt("First", firstStepId);
                 bundle.putInt("Last", lastStepId);
 
-                stepFragment.setArguments(bundle);
                 stepFragment.populateUI(stepEntity, firstStepId, lastStepId);
 
 
 
             }
         });
-
-
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -117,35 +128,11 @@ public class StepActivity extends AppCompatActivity implements StepFragment.OnBu
     }
 
 
+
     @Override
-    public void onButtonSelected(int stepId) {
-        mStepFactory = new StepViewModelFactory(repository, recipeId, stepId);
-        mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
-        mViewModel.getStep().observe(this, stepEntity ->{
-            if(stepEntity != null) {
-                StepEntity step = new StepEntity(stepEntity.getId(), stepEntity.getRecipeId(),
-                        stepEntity.getShortDescription(), stepEntity.getDescription(),
-                        stepEntity.getVideoURL(), stepEntity.getThumbnailURL());
-               Bundle bundle = new Bundle();
-                bundle.putParcelable("CurrentStepDetails", step);
-                bundle.putInt("First", firstStepId);
-                bundle.putInt("Last", lastStepId);
-                nextFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        stepFragment.setArguments(bundle);
-                    stepFragment.populateUI(step, firstStepId, lastStepId);
-                }});
-                previousFAB.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+    protected void onSaveInstanceState(Bundle outState) {
 
-                        stepFragment.setArguments(bundle);
-                        stepFragment.populateUI(step, firstStepId, lastStepId);
-                    }
-                });
-
-            }
-        });
+        outState = bundle;
+        super.onSaveInstanceState(outState);
     }
 }

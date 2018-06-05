@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.example.user.bakingtogether.DB.RecipeEntity;
@@ -27,7 +28,7 @@ import butterknife.ButterKnife;
 import static java.lang.String.valueOf;
 
 
-public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder> {
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder>{
 
     private List<RecipeEntity> recipesList;
     private Context context;
