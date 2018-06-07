@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModelProvider;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -40,8 +41,12 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+import static java.lang.Integer.valueOf;
+
 public class RecipesFragment extends Fragment {
 
+    private static final int LANSCAPE_GRID = 2 ;
+    private static final int PHONE_PORTRAIT_GRID = 1;
     @BindView(R.id.recipes_recycler_view)
     RecyclerView recipesRW;
     @BindView(R.id.recipes_progress_bar)
@@ -49,16 +54,10 @@ public class RecipesFragment extends Fragment {
     @BindView(R.id.error_loading_recipes)
     TextView errorMessage;
     private RecipesAdapter recipesAdapter;
-    private Retrofit retrofit;
-    private Context mContext;
     private AppRoomDatabase roomDB;
-    private LiveData<List<RecipeEntity>> recipesList;
     private TheRepository repository;
     private MainActivityViewModel mainViewModel;
     private MainViewModelFactory mMainViewModelFactory;
-
-    private RecipeDao recipeDao;
-    private RecipeApiInterface recipeApiInterface;
 
     public RecipesFragment() {
 
@@ -80,7 +79,15 @@ public class RecipesFragment extends Fragment {
        mainViewModel = ViewModelProviders.of(this, mMainViewModelFactory).get(MainActivityViewModel.class);
        mainViewModel.getRecipeEntity().observe(this,recipeEntities ->{
            if(recipeEntities != null && recipeEntities.size() != 0){
-               RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(), 1);
+               int rowNo = 0;
+              if(getResources().getBoolean(R.bool.isLandscape) ||
+                      getResources().getBoolean(R.bool.isTablet) ){
+                  rowNo = valueOf(LANSCAPE_GRID);
+              }else if(!getResources().getBoolean(R.bool.isLandscape)){
+                  rowNo = valueOf(PHONE_PORTRAIT_GRID);
+              }
+
+               RecyclerView.LayoutManager layoutManager = new GridLayoutManager(recipesRW.getContext(), rowNo);
                recipesRW.setLayoutManager(layoutManager);
                recipesAdapter = new RecipesAdapter(getContext(),recipeEntities);
                showData();

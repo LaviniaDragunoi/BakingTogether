@@ -21,15 +21,18 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
+        //Creating  and populate the fragment that will display the recipe list.
         RecipesFragment recipesFragment = new RecipesFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.recipes_list, recipesFragment)
                 .commit();
+        //Method called for debugging DB
         setInMemoryRoomDatabases();
 
     }
+
+    //Method used for debugging Room Db purposes
     public static void setInMemoryRoomDatabases(SupportSQLiteDatabase... database) {
         if (BuildConfig.DEBUG) {
             try {

@@ -40,6 +40,7 @@
             style="@style/ExoMediaButton.Pause"
             android:tint="@color/colorAccent"/>
 
+
     </LinearLayout>
 
     <LinearLayout

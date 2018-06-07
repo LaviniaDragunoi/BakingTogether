@@ -1,21 +1,28 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
 
-import android.app.Activity;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,11 +34,16 @@ import com.example.user.bakingtogether.TheRepository;
 import com.example.user.bakingtogether.UI.StepActivity;
 import com.example.user.bakingtogether.ViewModel.StepActivityViewModel;
 import com.example.user.bakingtogether.ViewModel.StepViewModelFactory;
+import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.ApiUtils;
+import com.example.user.bakingtogether.data.RecipeApiInterface;
 import com.google.android.exoplayer2.ExoPlayerFactory;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
+import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.ui.PlayerView;
@@ -40,192 +52,240 @@ import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class StepFragment extends Fragment {
+public class StepFragment extends Fragment implements View.OnClickListener {
 
 
+    private static final int DEFAULT_VALUE = -1;
     @BindView(R.id.description_step)
     TextView stepDescription;
     @BindView(R.id.previous_fab)
     FloatingActionButton previousFAB;
     @BindView(R.id.next_fab)
-   FloatingActionButton nextFAB;
-   @BindView(R.id.video_view)
-     PlayerView playerView;
+    FloatingActionButton nextFAB;
+    @BindView(R.id.video_view)
+    PlayerView playerView;
     @BindView(R.id.image_logo)
     ImageView imageViewLogo;
-    private ArrayList<StepEntity> stepListCurrent;;
+    //    @BindView(R.id.steps_list_recycler_view)
+//    RecyclerView listStepsRecycler;
+    private ArrayList<StepEntity> stepListCurrent;
+    ListsAdapter listsAdapter;
+
 
     private StepEntity currentStep;
     public SimpleExoPlayer player;
     public boolean playWhenReady;
     public long playBackPosition;
     public int currentWindow;
-    private AppRoomDatabase roomDB;
-    private TheRepository repository;
     private StepActivityViewModel mViewModel;
     private StepViewModelFactory mStepFactory;
 
 
-       private int first,last;
+    private int recipeId, stepId;
+    private View rootView;
+    private PlaybackStateCompat.Builder mPositionBuilder;
 
-
-
-    public StepFragment(){}
-
-//    @Override
-//    public void onCreate(@Nullable Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        if(savedInstanceState != null){
-//
-//        }
-//    }
+    public StepFragment() {
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
+        if(!getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
+            rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
+
+        }else if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
+            //full scree video?
+            rootView = inflater.inflate(R.layout.step_details_fragment_land, container, false);
+
+        }
         ButterKnife.bind(this, rootView);
 
-//        if(savedInstanceState != null){
-//        currentStep = getArguments().getParcelable("CurrentStepDetails");
-//        first = getArguments().getInt("First");
-//        last = getArguments().getInt("Last");
-//        }
-        mViewModel = ViewModelProviders.of(getActivity()).get(StepActivityViewModel.class);
-mViewModel.mStepId.observe(getActivity(), new Observer<Integer>() {
-    @Override
-    public void onChanged(@Nullable Integer integer) {
-        if(integer != null){
-          //  populateUI(mViewModel.getStep().getValue(),first,last);
+        if (savedInstanceState == null) {
+            Bundle bundle = getArguments();
+            if (bundle != null) {
+                recipeId = bundle.getInt("RecipeId");
+                stepId = bundle.getInt("StepId");
+                stepListCurrent = bundle.getParcelableArrayList("List");
+            }
+        } else {
+            recipeId = savedInstanceState.getInt("CurrentRecipeId", DEFAULT_VALUE);
+            stepListCurrent = savedInstanceState.getParcelableArrayList("ListOfSteps");
+            stepId = savedInstanceState.getInt("CurrentStepId", DEFAULT_VALUE);
         }
-    }
-});
+        if (recipeId != DEFAULT_VALUE && stepId != DEFAULT_VALUE) {
+            AppRoomDatabase roomDB = AppRoomDatabase.getsInstance(getContext());
+            AppExecutors executors = AppExecutors.getInstance();
+            RecipeApiInterface recipeApiInterface = ApiUtils.getRecipeInterfaceResponse();
+            TheRepository repository = TheRepository.getsInstance(executors,
+                    roomDB, roomDB.recipeDao(), recipeApiInterface);
+            mStepFactory = new StepViewModelFactory(repository, recipeId, stepId);
+        }
+        mViewModel = ViewModelProviders.of(this, mStepFactory).get(StepActivityViewModel.class);
 
+        nextFAB.setOnClickListener(this);
+        previousFAB.setOnClickListener(this);
+        mViewModel.getStep().observe(this, stepEntity -> {
+            if (stepEntity != null) {
+                    populateUI(stepEntity);
+
+            }
+        });
         return rootView;
     }
 
-    public void populateUI(StepEntity step, int firstStep, int lastStep){
+    private void populateUI(StepEntity stepEntity) {
 
-            stepDescription.setText(step.getDescription());
-            ((StepActivity) Objects.requireNonNull(getActivity()))
-                    .setActionBarTitle(step.getShortDescription());
-       if(!TextUtils.isEmpty(step.getVideoURL()) || !(step.getVideoURL().equals(""))){
-            imageViewLogo.setVisibility(View.GONE);
-            initializePlayer(Uri.parse(step.getVideoURL()));
-        }else if(!TextUtils.isEmpty(step.getThumbnailURL())|| !(step.getThumbnailURL().equals(""))){
-            imageViewLogo.setVisibility(View.GONE);
-            initializePlayer(Uri.parse(step.getThumbnailURL()));
-        }else {
-            playerView.setVisibility(View.GONE);
-            imageViewLogo.setVisibility(View.VISIBLE);
-           Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
-        }
-        nextFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.mStepId.setValue(step.getId() + 1);
-                mViewModel.setStepId(step.getId()+1);
-                Intent intent  = new Intent(getContext(), StepActivity.class);
-                intent.putExtra("NewStepId", mViewModel.getStepId().getValue());
-                intent.putExtra("FirstStepId", firstStep);
-                intent.putExtra("LastStepId", lastStep);
-                intent.putExtra("RecipeId", step.getRecipeId());
-                player.stop();
-                startActivity(intent);
-            }
-        });
-        previousFAB.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mViewModel.mStepId.setValue(step.getId() - 1);
-                mViewModel.setStepId(step.getId()-1);
-                Intent intent  = new Intent(getContext(), StepActivity.class);
-                intent.putExtra("NewStepId", mViewModel.getStepId().getValue());
-                intent.putExtra("FirstStepId", firstStep);
-                intent.putExtra("LastStepId", lastStep);
-                intent.putExtra("RecipeId", step.getRecipeId());
-                player.stop();
-                startActivity(intent);
-            }
-        });
+        ((StepActivity) Objects.requireNonNull(getActivity()))
+                .setActionBarTitle(stepEntity.getShortDescription());
 
-
-        if (step.getId() != firstStep &&
-                step.getId() != lastStep) {
-            previousFAB.setVisibility(View.VISIBLE);
-            nextFAB.setVisibility(View.VISIBLE);
+        String videoUrl = stepEntity.getVideoURL();
+        String thumbnail = stepEntity.getThumbnailURL();
+        if (videoUrl != null && !videoUrl.isEmpty()) {
+            showLogoImage(false);
+            initializePlayer(Uri.parse(videoUrl));
+        } else if (thumbnail != null && !thumbnail.isEmpty()) {
+            showLogoImage(true);
+            Picasso.get().load(thumbnail).placeholder(R.drawable.ic_logo).error(R.drawable.ic_logo)
+                    .into(imageViewLogo);
         } else {
-            if (step.getId() == firstStep &&
-                    step.getId() != lastStep) {
-                previousFAB.setVisibility(View.GONE);
-                nextFAB.setVisibility(View.VISIBLE);
-            } else if(step.getId() != firstStep &&
-                    step.getId() == lastStep) {
-                previousFAB.setVisibility(View.VISIBLE);
-                nextFAB.setVisibility(View.GONE);
-            }
+            showLogoImage(true);
+            Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
+
         }
 
+        if(getResources().getBoolean(R.bool.isLandscape)){
+            nextFAB.setVisibility(View.INVISIBLE);
+            previousFAB.setVisibility(View.INVISIBLE);
+            stepDescription.setVisibility(View.INVISIBLE);
+        }else if(!getResources().getBoolean(R.bool.isLandscape) || getResources().getBoolean(R.bool.isTablet)) {
+            stepDescription.setText(stepEntity.getDescription());
+            if (stepEntity.getId() != stepListCurrent.get(stepListCurrent.size() - 1).getId()) {
+                nextFAB.setVisibility(View.VISIBLE);
+            } else {
+                nextFAB.setVisibility(View.INVISIBLE);
+            }
 
+            if (stepEntity.getId() != stepListCurrent.get(0).getId()) {
+                previousFAB.setVisibility(View.VISIBLE);
+            } else {
+                previousFAB.setVisibility(View.INVISIBLE);
+            }
+
+        }
+}
+    private void showLogoImage(Boolean isShow){
+        if(isShow){
+            imageViewLogo.setVisibility(View.VISIBLE);
+            playerView.setVisibility(View.INVISIBLE);
+        }else { imageViewLogo.setVisibility(View.INVISIBLE);
+            playerView.setVisibility(View.VISIBLE);}
     }
 
-    public void initializePlayer(Uri mediaUri){
-        if(player == null){
+    public List<Object> convertStepsListToObjectList(List<StepEntity> stepsEntityList){
+        return new ArrayList<>(stepsEntityList);
+    }
+
+
+    public void initializePlayer(Uri mediaUri) {
+        if (player == null) {
             //Create and instance for ExoPLayer
             TrackSelector trackSelector = new DefaultTrackSelector();
-            //   LoadControl loadControl = new DefaultLoadControl();
+            //  LoadControl loadControl = new DefaultLoadControl();
             player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
             playerView.setPlayer(player);
             //prepare the MediaSource
             String userAgent = Util.getUserAgent(getContext(), "BakingTogether");
             MediaSource mediaSource = new ExtractorMediaSource.Factory(new
                     DefaultHttpDataSourceFactory(userAgent)).createMediaSource(mediaUri);
-            player .prepare(mediaSource);
+            player.prepare(mediaSource);
             player.setPlayWhenReady(true);
 
+        }else if(playBackPosition != -1){
+            player.seekTo(playBackPosition);
+            playBackPosition = -1;
+            player.setPlayWhenReady(true);
         }
     }
-   @Override
+
+    @Override
     public void onStart() {
         super.onStart();
-//       if(is){
-//           if(!TextUtils.isEmpty(currentStep.getVideoURL()) || !(currentStep.getVideoURL().equals(""))) {
-//               initializePlayer(Uri.parse(currentStep.getVideoURL()));
-//           } else if(!TextUtils.isEmpty(currentStep.getThumbnailURL())|| !(currentStep.getThumbnailURL().equals(""))){
-//               imageViewLogo.setVisibility(View.GONE);
-//               initializePlayer(Uri.parse(currentStep.getThumbnailURL()));
-//           }else {
-//               playerView.setVisibility(View.GONE);
-//               imageViewLogo.setVisibility(View.VISIBLE);
-//               Picasso.get().load(R.drawable.ic_logo).into(imageViewLogo);
-//           }
 
     }
+
     @Override
     public void onPause() {
         super.onPause();
-        if(Util.SDK_INT <= 23){
+        if (player != null) {
             releasePlayer();
         }
     }
+
     private void releasePlayer() {
         player.stop();
         player.release();
         player = null;
     }
+
     @Override
     public void onStop() {
         super.onStop();
-        if(Util.SDK_INT > 23){
+        if (player != null) {
+            playBackPosition = player.getCurrentPosition();
             releasePlayer();
         }
     }
-        }
 
+    @Override
+    public void onClick(View v) {
+        StepEntity step = mViewModel.getCurrentStep();
+        if(v.getId() == R.id.next_fab){
+            if(player != null) releasePlayer();
+            stepId++;
+            StepEntity newStep = null;
+            for(int i=0;i<stepListCurrent.size();i++){
+                if(stepListCurrent.get(i).getId() == stepId){
+                    newStep = stepListCurrent.get(i);
+                }
+
+            }
+            populateUI(newStep);
+    }else if(v.getId() == R.id.previous_fab){
+           if(player != null) releasePlayer();
+            stepId--;
+            StepEntity newStep = null;
+            for(int i=0;i<stepListCurrent.size();i++){
+                if(stepListCurrent.get(i).getId() == stepId){
+                    newStep = stepListCurrent.get(i);
+                }
+
+            }
+            populateUI(newStep);
+        }
+    }
+
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        if (player != null) {
+            outState.putLong("PlayerPosition", player.getCurrentPosition());
+            outState.putBoolean("PlayWhenReady", playWhenReady);
+        }
+        outState.putInt("CurrentStepId", mViewModel.getStepId().getValue());
+        outState.putInt("CurrentRecipeId", recipeId);
+        outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
+    }
+
+}

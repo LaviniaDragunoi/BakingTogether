@@ -3,12 +3,13 @@ package com.example.user.bakingtogether.ViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModel;
+import android.os.Parcelable;
 
 import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.TheRepository;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 public class StepActivityViewModel extends ViewModel {
@@ -32,42 +33,21 @@ public class StepActivityViewModel extends ViewModel {
         return mStepId;
     }
 
-    public void setStepId(Integer stepId) {
-        this.mStepId.postValue(stepId);
-    }
 
-    public LiveData<List<StepEntity>> getStepsList() {
-        return mStepsList;
-    }
-    public List<StepEntity> getList(){ return mStepsList.getValue();}
+    public ArrayList<? extends Parcelable> getList(){
+        ArrayList<StepEntity> steps = new ArrayList<>();
+        List<StepEntity> list = mStepsList.getValue();
 
-    public void setStepsList(LiveData<List<StepEntity>> stepsList) {
-        this.mStepsList = stepsList;
-    }
+            steps.addAll(list);
+                return steps;}
+
 
     public LiveData<StepEntity> getStep() {
         return mStep;
     }
-    public StepEntity getStepByItsOwnId(Integer stepId){
-        return mRepository.getStepByItsId(stepId).getValue();
+
+    public StepEntity getCurrentStep(){
+        return mStep.getValue();
     }
 
-    public void setStep(Integer stepId) {
-        this.mStep = mRepository.getStepByItsId(stepId);
-    }
-
-
-
-//    public StepEntity setNextId(){
-//        mStepId = mStepId++;
-//        setStepId(mStepId);
-//        return mRepository.getStepByItsId(mStepId).getValue();
-//    }
-//
-//    public StepEntity setPreviousId(){
-//
-//        mStepId= mStepId--;
-//        setStepId(mStepId);
-//        return mRepository.getStepByItsId(mStepId).getValue();
-//    }
 }

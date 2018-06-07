@@ -36,16 +36,6 @@
                 android:value=".UI.DetailsActivity" />
         </activity>
 
-        <receiver android:name=".widget.IngredientsWidgetProvider">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/ingredients_widget_provider_info" />
-        </receiver>
-        <service android:name=".widget.RecipesService"/>
         <service android:name=".widget.ListWidgetService"/>
     </application>
 

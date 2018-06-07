@@ -93,8 +93,8 @@ this.context = context;
 
                         Intent stepIntent = new Intent(vh2.itemView.getContext(), StepActivity.class);
                         stepIntent.putExtra("CurrentStep", step.getId())
-                        .putExtra("CurrentRecipe", step.getRecipeId())
-                        .putExtra("StepsList",new ArrayList<>(objectList));
+                       .putExtra("CurrentRecipe", step.getRecipeId())
+                       .putExtra("StepsList",new ArrayList<>(objectList));
                     vh2.itemView.getContext().startActivity(stepIntent);
 
                 }
