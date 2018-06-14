@@ -1,12 +1,14 @@
 package com.example.user.bakingtogether.UI.ObjectList;
 
 
+import android.annotation.SuppressLint;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.media.session.PlaybackState;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -22,6 +24,8 @@ import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +41,7 @@ import com.example.user.bakingtogether.ViewModel.StepViewModelFactory;
 import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.ApiUtils;
 import com.example.user.bakingtogether.data.RecipeApiInterface;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -46,6 +51,7 @@ import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
 import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
@@ -95,6 +101,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     public StepFragment() {
     }
 
+    @SuppressLint("InlinedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
@@ -103,7 +110,6 @@ public class StepFragment extends Fragment implements View.OnClickListener {
             rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
 
         }else if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
-            //full scree video?
             rootView = inflater.inflate(R.layout.step_details_fragment_land, container, false);
 
         }
@@ -190,16 +196,11 @@ public class StepFragment extends Fragment implements View.OnClickListener {
             playerView.setVisibility(View.VISIBLE);}
     }
 
-    public List<Object> convertStepsListToObjectList(List<StepEntity> stepsEntityList){
-        return new ArrayList<>(stepsEntityList);
-    }
-
 
     public void initializePlayer(Uri mediaUri) {
         if (player == null) {
             //Create and instance for ExoPLayer
             TrackSelector trackSelector = new DefaultTrackSelector();
-            //  LoadControl loadControl = new DefaultLoadControl();
             player = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
             playerView.setPlayer(player);
             //prepare the MediaSource
@@ -208,11 +209,21 @@ public class StepFragment extends Fragment implements View.OnClickListener {
                     DefaultHttpDataSourceFactory(userAgent)).createMediaSource(mediaUri);
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
+            if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
+                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+
+
+            }
 
         }else if(playBackPosition != -1){
             player.seekTo(playBackPosition);
             playBackPosition = -1;
             player.setPlayWhenReady(true);
+            if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
+                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+                player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
+            }
         }
     }
 
@@ -251,6 +262,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
         if(v.getId() == R.id.next_fab){
             if(player != null) releasePlayer();
             stepId++;
+            mViewModel.setStep(stepId);
             StepEntity newStep = null;
             for(int i=0;i<stepListCurrent.size();i++){
                 if(stepListCurrent.get(i).getId() == stepId){
@@ -263,6 +275,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
            if(player != null) releasePlayer();
             stepId--;
             StepEntity newStep = null;
+            mViewModel.setStep(stepId);
             for(int i=0;i<stepListCurrent.size();i++){
                 if(stepListCurrent.get(i).getId() == stepId){
                     newStep = stepListCurrent.get(i);
@@ -277,7 +290,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
+
 
         if (player != null) {
             outState.putLong("PlayerPosition", player.getCurrentPosition());
@@ -286,6 +299,9 @@ public class StepFragment extends Fragment implements View.OnClickListener {
         outState.putInt("CurrentStepId", mViewModel.getStepId().getValue());
         outState.putInt("CurrentRecipeId", recipeId);
         outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
+        super.onSaveInstanceState(outState);
     }
+
+
 
 }

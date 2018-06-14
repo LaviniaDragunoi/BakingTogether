@@ -69,7 +69,8 @@ public class DetailsActivity extends AppCompatActivity {
 
         mViewModel.getmIngredientsList().observe(this, ingredientEntityList -> {
             if (ingredientEntityList != null && ingredientEntityList.size() != 0) {
-                ingredientsFragment.bindDataToAdapter(ingredientsFragment.convertIngredientListToObjectList(ingredientEntityList));
+                ingredientsFragment.bindDataToAdapter(ingredientsFragment
+                        .convertIngredientListToObjectList(ingredientEntityList));
             }
         });
         FragmentManager fragmentManager = getSupportFragmentManager();

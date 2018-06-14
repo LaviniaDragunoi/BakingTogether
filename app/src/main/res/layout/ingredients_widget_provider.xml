@@ -4,30 +4,37 @@
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin"
     android:orientation="vertical">
+    <include
+        android:id="selecting_recipe"
+        layout="@layout/activity_widget_config"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:alpha="0.3"
         android:src="@drawable/icontest"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
 
-    <Spinner
-        android:id="@+id/recipes_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="right"
-        android:layout_marginRight="30dp"
-        tools:ignore="RtlHardcoded" />
+
     <ListView
+        android:layout_margin="10dp"
         android:id="@+id/list_widget"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:focusableInTouchMode="true"
         android:divider="@color/singleColor"
         android:dividerHeight="1dp"/>
 
 </LinearLayout>
+    <TextView
+        android:id="@+id/error_loading_widget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
+        android:text="@string/widget_error"/>
+
 </RelativeLayout>

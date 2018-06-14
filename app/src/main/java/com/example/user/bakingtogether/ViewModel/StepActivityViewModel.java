@@ -46,6 +46,9 @@ public class StepActivityViewModel extends ViewModel {
         return mStep;
     }
 
+    public void setStep(int newStepId){
+        mStep = mRepository.getStepByItsId(newStepId);
+    }
     public StepEntity getCurrentStep(){
         return mStep.getValue();
     }

@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
@@ -60,6 +62,7 @@ public class StepActivity extends AppCompatActivity {
 
     public void setActionBarTitle(String title) {
         Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+
     }
 
 }

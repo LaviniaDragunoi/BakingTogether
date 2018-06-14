@@ -111,6 +111,10 @@ public class TheRepository {
         return mRecipeDao.getIngredientsByRecipeId(recipeId);
     }
 
+    public List<IngredientEntity> getIngredientsByRecipeIdWidget(int recipeId){
+        return mRecipeDao.getIngredientsListByRecipeId(recipeId);
+    }
+
     public LiveData<StepEntity> getStepByItsId(int stepId){
         return mRecipeDao.getStepByStepId(stepId);
     }
