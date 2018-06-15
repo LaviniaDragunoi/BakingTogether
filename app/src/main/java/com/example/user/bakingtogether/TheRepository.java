@@ -99,6 +99,10 @@ public class TheRepository {
     public LiveData<RecipeDetails> getRecipeById(int recipeId) {
         return mRecipeDao.getRecipeById(recipeId);
     }
+
+    public LiveData<List<RecipeDetails>> getRecipesWidget(){
+        return mRecipeDao.getRecipesForWidget();
+    }
     public LiveData<List<RecipeEntity>> getRecipes(){
         return mRecipeDao.loadAllRecipes();
     }

@@ -36,6 +36,9 @@ public abstract class RecipeDao {
     @Transaction
     public abstract LiveData<RecipeDetails> getRecipeById(int id);
 
+    @Query("SELECT * FROM recipes")
+    public abstract LiveData<List<RecipeDetails>> getRecipesForWidget();
+
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
     public abstract LiveData<List<IngredientEntity>> getIngredientsByRecipeId(int id);
 
