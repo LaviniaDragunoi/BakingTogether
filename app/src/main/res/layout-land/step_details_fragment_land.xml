@@ -11,16 +11,18 @@
         android:id="@+id/video_view"
         android:focusable="false"
         app:resize_mode="fit"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_gravity="fill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:foregroundGravity="center"/>
     <ImageView
         android:id="@+id/image_logo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
         android:visibility="invisible"
         tools:ignore="ContentDescription"
         android:scaleType="centerInside"
+        android:layout_gravity="center"
         android:layout_margin="5dp"/>
 
 

@@ -12,6 +12,7 @@ import android.widget.Button;
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
 import com.example.user.bakingtogether.DB.IngredientEntity;
+import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.DB.StepEntity;
 import com.example.user.bakingtogether.R;
@@ -29,7 +30,11 @@ import java.util.Objects;
 
 import butterknife.BindView;
 
+import static com.example.user.bakingtogether.UI.recipes.RecipesAdapter.DEFAULT_VALUE;
+import static com.example.user.bakingtogether.UI.recipes.RecipesAdapter.EXTRA_RECIPE;
+
 public class DetailsActivity extends AppCompatActivity {
+
     private Intent intent;
     RecipeEntity currentRecipe;
     private ListsAdapter objectAdapter;
@@ -42,6 +47,9 @@ public class DetailsActivity extends AppCompatActivity {
     private TheRepository repository;
     private DetailsViewModelFactory mDetailsViewModelFactory;
     private DetailsActivityViewModel mViewModel;
+    private int currentRecipeId;
+    public static final String RECIPE_ID = "com.example.user.bakingtogether.widget.extra.RECIPE_ID";
+
 
     @SuppressLint("NewApi")
     @Override
@@ -52,18 +60,28 @@ public class DetailsActivity extends AppCompatActivity {
 
 
         roomDB = AppRoomDatabase.getsInstance(this);
+        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
+                roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
         intent = getIntent();
-        currentRecipe = intent.getParcelableExtra("Recipe");
-        final int currentRecipeId = currentRecipe.getId();
+        if(intent != null) {
+            if (intent.hasExtra(EXTRA_RECIPE)) {
+                currentRecipe = intent.getParcelableExtra(EXTRA_RECIPE);
+                currentRecipeId = currentRecipe.getId();
+            } else if (intent.hasExtra(RECIPE_ID)) {
+                currentRecipeId = intent.getIntExtra(RECIPE_ID, DEFAULT_VALUE);
+                currentRecipe = repository.getRecipeEntityById(currentRecipeId);
+            }
+        }
+
         //set recipe title
         setTitle(currentRecipe.getName());
+
 
         //Ingredients list fragment
 
         MyListsFragment ingredientsFragment =  new MyListsFragment();
         //view model
-        repository = TheRepository.getsInstance(AppExecutors.getInstance(),
-                roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
+
         mDetailsViewModelFactory = new DetailsViewModelFactory(repository, currentRecipeId);
         mViewModel = ViewModelProviders.of(this, mDetailsViewModelFactory).get(DetailsActivityViewModel.class);
 
@@ -71,8 +89,10 @@ public class DetailsActivity extends AppCompatActivity {
             if (ingredientEntityList != null && ingredientEntityList.size() != 0) {
                 ingredientsFragment.bindDataToAdapter(ingredientsFragment
                         .convertIngredientListToObjectList(ingredientEntityList));
+
             }
         });
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.ingredients_list,ingredientsFragment)

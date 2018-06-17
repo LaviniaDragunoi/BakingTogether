@@ -100,7 +100,10 @@ public class TheRepository {
         return mRecipeDao.getRecipeById(recipeId);
     }
 
-    public LiveData<List<RecipeDetails>> getRecipesWidget(){
+    public RecipeEntity getRecipeEntityById(int recipeId){
+        return mRecipeDao.getRecipeByIdForWidget(recipeId);
+    }
+    public List<RecipeDetails> getRecipesWidget(){
         return mRecipeDao.getRecipesForWidget();
     }
     public LiveData<List<RecipeEntity>> getRecipes(){

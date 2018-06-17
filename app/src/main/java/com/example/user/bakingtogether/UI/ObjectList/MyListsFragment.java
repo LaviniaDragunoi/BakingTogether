@@ -34,13 +34,7 @@ public class MyListsFragment extends Fragment {
     @BindView(R.id.object_list_recycler_view)
     RecyclerView objectListRV;
     private Context mContext;
-    ListsAdapter objectAdapter;
-    private AppRoomDatabase roomDB;
-    private int recipeId;
-    private DetailsActivityViewModel mViewModel;
-    private ArrayList<Parcelable> objectIngredientsList, objectStepsList;
-    private TheRepository repository;
-    private DetailsViewModelFactory mDetailsViewModelFactory;
+
 
     public MyListsFragment() {
 

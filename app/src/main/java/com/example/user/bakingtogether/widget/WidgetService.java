@@ -2,6 +2,7 @@ package com.example.user.bakingtogether.widget;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
@@ -17,8 +18,11 @@ import com.example.user.bakingtogether.data.ApiUtils;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.example.user.bakingtogether.UI.DetailsActivity.RECIPE_ID;
+
+
 public class WidgetService extends RemoteViewsService {
-    private List<RecipeEntity> mRecipes = new ArrayList<>();
+    private List<RecipeDetails> mRecipes = new ArrayList<>();
     private TheRepository repository;
 
 
@@ -38,7 +42,6 @@ public class WidgetService extends RemoteViewsService {
         @Override
         public void onCreate() {
 
-            initRecipesGrid();
         }
 
         @Override
@@ -61,8 +64,17 @@ public class WidgetService extends RemoteViewsService {
         public RemoteViews getViewAt(int position) {
             RemoteViews views = new RemoteViews(mContext.getPackageName(),
                     R.layout.grid_item_widget);
-            views.setTextViewText(R.id.widget_recipe_name, mRecipes.get(position).getName());
+            views.setTextViewText(R.id.widget_recipe_name, mRecipes.get(position).getRecipe().getName());
             views.setImageViewResource(R.id.widget_recipe_image, R.drawable.baking_ic_tran);
+
+            int recipeId = mRecipes.get(position).getRecipe().getId();
+
+            //ClickListener on each gridView item
+            Bundle extras = new Bundle();
+            extras.putInt(RECIPE_ID, recipeId);
+            Intent fillInIntent = new Intent();
+            fillInIntent.putExtras(extras);
+            views.setOnClickFillInIntent(R.id.widget_recipe_image, fillInIntent);
             return views;
         }
 
@@ -87,11 +99,11 @@ public class WidgetService extends RemoteViewsService {
         }
     }
 
-    private void initRecipesGrid() {
+   public void initRecipesGrid() {
         AppRoomDatabase roomDB = AppRoomDatabase.getsInstance(this);
         repository = TheRepository.getsInstance(AppExecutors.getInstance(),
                 roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
-        mRecipes = repository.getInitialRecipeList().getValue();
+        mRecipes = repository.getRecipesWidget();
 
     }
 }

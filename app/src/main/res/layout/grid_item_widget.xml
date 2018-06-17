@@ -8,8 +8,8 @@
     android:layout_gravity="center">
     <ImageView
         android:id="@+id/widget_recipe_image"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         tools:src="@drawable/baking_ic_tran">
@@ -17,10 +17,10 @@
     <TextView
         android:id="@+id/widget_recipe_name"
         android:layout_gravity="center_horizontal"
-        android:textSize="20sp"
+        android:textSize="12sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         tools:text="Recipe's name"
-        android:textColor="@color/colorPrimary"/>
+        android:textColor="@color/singleColor"/>
 
 </LinearLayout>

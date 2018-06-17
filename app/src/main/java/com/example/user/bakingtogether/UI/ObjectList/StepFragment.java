@@ -79,10 +79,8 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     PlayerView playerView;
     @BindView(R.id.image_logo)
     ImageView imageViewLogo;
-    //    @BindView(R.id.steps_list_recycler_view)
-//    RecyclerView listStepsRecycler;
     private ArrayList<StepEntity> stepListCurrent;
-    ListsAdapter listsAdapter;
+
 
 
     private StepEntity currentStep;
@@ -92,7 +90,6 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     public int currentWindow;
     private StepActivityViewModel mViewModel;
     private StepViewModelFactory mStepFactory;
-
 
     private int recipeId, stepId;
     private View rootView;
@@ -111,7 +108,8 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
         }else if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
             rootView = inflater.inflate(R.layout.step_details_fragment_land, container, false);
-
+            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
+            player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
         }
         ButterKnife.bind(this, rootView);
 
@@ -213,17 +211,13 @@ public class StepFragment extends Fragment implements View.OnClickListener {
                 playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
                 player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
 
-
             }
 
         }else if(playBackPosition != -1){
             player.seekTo(playBackPosition);
             playBackPosition = -1;
             player.setPlayWhenReady(true);
-            if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
-                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-            }
+
         }
     }
 
@@ -258,7 +252,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        StepEntity step = mViewModel.getCurrentStep();
+
         if(v.getId() == R.id.next_fab){
             if(player != null) releasePlayer();
             stepId++;
@@ -290,16 +284,15 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-
+        super.onSaveInstanceState(outState);
+        outState.putInt("CurrentStepId", mViewModel.getStepId().getValue());
+        outState.putInt("CurrentRecipeId", recipeId);
+        outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
 
         if (player != null) {
             outState.putLong("PlayerPosition", player.getCurrentPosition());
             outState.putBoolean("PlayWhenReady", playWhenReady);
         }
-        outState.putInt("CurrentStepId", mViewModel.getStepId().getValue());
-        outState.putInt("CurrentRecipeId", recipeId);
-        outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
-        super.onSaveInstanceState(outState);
     }
 
 

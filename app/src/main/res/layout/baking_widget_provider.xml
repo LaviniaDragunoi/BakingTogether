@@ -7,8 +7,9 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/cacke"
-        android:alpha="0.5"/>
+        android:alpha="0.3"/>
 <LinearLayout
+    android:id="@+id/choose_recipe"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -20,7 +21,7 @@
         android:layout_gravity="center_horizontal"
         android:contentDescription="@string/appwidget_text"
         android:text="@string/appwidget_text"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/singleColor"
         android:textSize="20sp"
         android:textStyle="bold|italic" />
 
@@ -32,4 +33,5 @@
         android:numColumns="2"/>
 
 </LinearLayout>
+
 </FrameLayout>
