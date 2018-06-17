@@ -33,6 +33,9 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
     private List<RecipeEntity> recipesList;
     private Context context;
 
+    public static final String EXTRA_RECIPE = "CurrentRecipe" ;
+    public static final int DEFAULT_VALUE = -1;
+
     public RecipesAdapter (Context context, List<RecipeEntity> recipeList){
         this.context = context;
         this.recipesList = recipeList;
@@ -66,7 +69,7 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(holder.itemView.getContext(), DetailsActivity.class);
-                intent.putExtra("Recipe", recipeEntity);
+                intent.putExtra(EXTRA_RECIPE, recipeEntity);
                 holder.itemView.getContext().startActivity(intent);
             }
         });
