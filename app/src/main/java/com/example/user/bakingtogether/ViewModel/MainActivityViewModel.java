@@ -23,7 +23,7 @@ public class MainActivityViewModel extends ViewModel {
     public LiveData<List<RecipeEntity>> getRecipeEntity() {
         return recipeEntity;
     }
-    public List<RecipeDetails> getWidgetRecipeList(){
+    public LiveData<List<RecipeDetails>> getWidgetRecipeList(){
         return mRepository.getRecipesWidget();
     }
 }

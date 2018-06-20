@@ -1,7 +1,5 @@
 package com.example.user.bakingtogether.widget;
 
-import android.app.Activity;
-import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.Context;
@@ -11,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.widget.RemoteViews;
 
 import com.example.user.bakingtogether.R;
-import com.example.user.bakingtogether.UI.DetailsActivity;
 
 /**
  * Implementation of App Widget functionality.
@@ -34,7 +31,7 @@ public class BakingWidgetProvider extends AppWidgetProvider {
      */
     private static RemoteViews setRemoteAdapter(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
-
+      //   views.setTextViewText(R.id.recipe_name_widget, recipeName );
         views.setRemoteAdapter(R.id.ingredients_list_widget, new Intent(context, WidgetService.class));
 
 return views;
@@ -42,10 +39,11 @@ return views;
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+
         for (int appWidgetId : appWidgetIds) {
+            WidgetConfigActivity.deleteRecipeIdPref(context,appWidgetId);
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             int recipeId = sp.getInt("RecipeIdSh", -1);
-
             updateAppWidget(context, appWidgetManager,appWidgetId, recipeId);
         }
     }

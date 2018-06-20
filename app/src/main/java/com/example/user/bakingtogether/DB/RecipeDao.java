@@ -1,8 +1,6 @@
 package com.example.user.bakingtogether.DB;
 
 import android.arch.lifecycle.LiveData;
-import android.arch.lifecycle.MediatorLiveData;
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
@@ -38,11 +36,14 @@ public abstract class RecipeDao {
 
     @Query("SELECT * FROM recipes")
     @Transaction
-    public abstract List<RecipeDetails> getRecipesForWidget();
+    public abstract LiveData<List<RecipeDetails>> getRecipesForWidget();
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     @Transaction
-    public abstract RecipeEntity getRecipeByIdForWidget(int id);
+    public abstract RecipeDetails getRecipeByIdForWidget(int id);
+    @Query("SELECT * FROM recipes WHERE id = :id")
+    @Transaction
+    public abstract RecipeEntity getRecipeByIdForDetailsActiv(int id);
 
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
     public abstract LiveData<List<IngredientEntity>> getIngredientsByRecipeId(int id);
