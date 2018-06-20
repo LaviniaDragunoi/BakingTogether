@@ -4,6 +4,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.ViewModel;
 import android.view.View;
 
+import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.TheRepository;
 
@@ -21,5 +22,8 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<List<RecipeEntity>> getRecipeEntity() {
         return recipeEntity;
+    }
+    public List<RecipeDetails> getWidgetRecipeList(){
+        return mRepository.getRecipesWidget();
     }
 }

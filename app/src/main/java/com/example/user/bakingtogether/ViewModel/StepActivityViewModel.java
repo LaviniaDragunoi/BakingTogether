@@ -33,6 +33,10 @@ public class StepActivityViewModel extends ViewModel {
         return mStepId;
     }
 
+    public int getStepIdInt(){
+        return mStepId.getValue();
+    }
+
 
     public ArrayList<? extends Parcelable> getList(){
         ArrayList<StepEntity> steps = new ArrayList<>();
@@ -47,6 +51,9 @@ public class StepActivityViewModel extends ViewModel {
     }
 
     public void setStep(int newStepId){
+       mStep = mRepository.getStepByItsId(newStepId);
+    }
+    public void setStepId(int newStepId){
         mStepId.setValue(newStepId);
     }
     public StepEntity getCurrentStep(){

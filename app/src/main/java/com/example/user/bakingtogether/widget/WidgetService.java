@@ -1,28 +1,34 @@
 package com.example.user.bakingtogether.widget;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
+import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.RecipeDao;
 import com.example.user.bakingtogether.DB.RecipeDetails;
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.TheRepository;
 import com.example.user.bakingtogether.data.ApiUtils;
+import com.example.user.bakingtogether.data.Ingredients;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.user.bakingtogether.UI.DetailsActivity.RECIPE_ID;
+import static com.example.user.bakingtogether.UI.recipes.RecipesAdapter.DEFAULT_VALUE;
 
 
 public class WidgetService extends RemoteViewsService {
     private List<RecipeDetails> mRecipes = new ArrayList<>();
+    private List<IngredientEntity> ingredientList = new ArrayList<>();
     private TheRepository repository;
 
 
@@ -46,7 +52,7 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            initRecipesGrid();
+            createIngredientList();
         }
 
         @Override
@@ -56,25 +62,17 @@ public class WidgetService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            if(mRecipes == null) return 0;
-            return mRecipes.size();
+            if(ingredientList == null) return 0;
+            return ingredientList.size();
         }
 
         @Override
         public RemoteViews getViewAt(int position) {
             RemoteViews views = new RemoteViews(mContext.getPackageName(),
-                    R.layout.grid_item_widget);
-            views.setTextViewText(R.id.widget_recipe_name, mRecipes.get(position).getRecipe().getName());
-            views.setImageViewResource(R.id.widget_recipe_image, R.drawable.baking_ic_tran);
+                    R.layout.baking_widget_provider);
 
-            int recipeId = mRecipes.get(position).getRecipe().getId();
+            views.setTextViewText(R.id.widget_item, getIngredientString(position));
 
-            //ClickListener on each gridView item
-            Bundle extras = new Bundle();
-            extras.putInt(RECIPE_ID, recipeId);
-            Intent fillInIntent = new Intent();
-            fillInIntent.putExtras(extras);
-            views.setOnClickFillInIntent(R.id.widget_recipe_image, fillInIntent);
             return views;
         }
 
@@ -99,11 +97,27 @@ public class WidgetService extends RemoteViewsService {
         }
     }
 
-   public void initRecipesGrid() {
+   public void createIngredientList() {
+       SharedPreferences sp = getSharedPreferences("RecipeIdSharedPref", Activity.MODE_PRIVATE);
+       int recipeId = sp.getInt("RecipeIdSh", DEFAULT_VALUE);
         AppRoomDatabase roomDB = AppRoomDatabase.getsInstance(this);
         repository = TheRepository.getsInstance(AppExecutors.getInstance(),
                 roomDB, roomDB.recipeDao(), ApiUtils.getRecipeInterfaceResponse());
-        mRecipes = repository.getRecipesWidget();
+       AppExecutors.getInstance().diskIO().execute(new Runnable(){
 
+                                                       @Override
+                                                       public void run() {
+                                                           mRecipes = repository.getRecipesWidget();
+                                                       }
+                                                   }
+       );
+
+       ingredientList = mRecipes.get(recipeId).getIngredients();
+
+    }
+    public String getIngredientString(int position){
+        return ingredientList.get(position).getQuantity() + " "
+                + ingredientList.get(position).getMeasure() + " "
+                + ingredientList.get(position).getIngredient();
     }
 }

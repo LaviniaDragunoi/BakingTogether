@@ -3,35 +3,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="@dimen/widget_margin">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/cacke"
         android:alpha="0.3"/>
-<LinearLayout
-    android:id="@+id/choose_recipe"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
-    <TextView
-        android:id="@+id/appwidget_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:layout_gravity="center_horizontal"
-        android:contentDescription="@string/appwidget_text"
-        android:text="@string/appwidget_text"
-        android:textColor="@color/singleColor"
-        android:textSize="20sp"
-        android:textStyle="bold|italic" />
-
-    <GridView
-        android:id="@+id/widget_grid"
+    <ListView
+        android:id="@+id/ingredients_list_widget"
+        android:layout_margin="10dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:numColumns="2"/>
-
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:focusableInTouchMode="true"
+        android:divider="@color/singleColor"
+        android:dividerHeight="1dp"/>
 
 </FrameLayout>

@@ -16,6 +16,7 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.PlaybackStateCompat;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -28,6 +29,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.user.bakingtogether.AppExecutors;
@@ -79,6 +81,10 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     PlayerView playerView;
     @BindView(R.id.image_logo)
     ImageView imageViewLogo;
+    @BindView(R.id.scroling_view)
+    NestedScrollView scrollView;
+    @BindView(R.id.buttons_view)
+    RelativeLayout buttonsView;
     private ArrayList<StepEntity> stepListCurrent;
 
 
@@ -103,27 +109,24 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        if(!getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
-            rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
 
-        }else if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
-            rootView = inflater.inflate(R.layout.step_details_fragment_land, container, false);
-            playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-            player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-        }
+        rootView = inflater.inflate(R.layout.step_details_fragment, container, false);
         ButterKnife.bind(this, rootView);
 
-        if (savedInstanceState == null) {
+        if (savedInstanceState != null) {
+            recipeId = savedInstanceState.getInt("CurrentRecipeId", DEFAULT_VALUE);
+            stepListCurrent = savedInstanceState.getParcelableArrayList("ListOfSteps");
+            stepId = savedInstanceState.getInt("CurrentStepId", DEFAULT_VALUE);
+            playBackPosition = savedInstanceState.getLong("PlayerPosition");
+            playWhenReady = savedInstanceState.getBoolean("PlayWhenReady");
+
+        } else{
             Bundle bundle = getArguments();
             if (bundle != null) {
                 recipeId = bundle.getInt("RecipeId");
                 stepId = bundle.getInt("StepId");
                 stepListCurrent = bundle.getParcelableArrayList("List");
             }
-        } else {
-            recipeId = savedInstanceState.getInt("CurrentRecipeId", DEFAULT_VALUE);
-            stepListCurrent = savedInstanceState.getParcelableArrayList("ListOfSteps");
-            stepId = savedInstanceState.getInt("CurrentStepId", DEFAULT_VALUE);
         }
         if (recipeId != DEFAULT_VALUE && stepId != DEFAULT_VALUE) {
             AppRoomDatabase roomDB = AppRoomDatabase.getsInstance(getContext());
@@ -166,11 +169,15 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
         }
 
+
         if(getResources().getBoolean(R.bool.isLandscape)){
-            nextFAB.setVisibility(View.INVISIBLE);
-            previousFAB.setVisibility(View.INVISIBLE);
-            stepDescription.setVisibility(View.INVISIBLE);
+            nextFAB.setVisibility(View.GONE);
+            previousFAB.setVisibility(View.GONE);
+            scrollView.setVisibility(View.GONE);
+            buttonsView.setVisibility(View.GONE);
         }else if(!getResources().getBoolean(R.bool.isLandscape) || getResources().getBoolean(R.bool.isTablet)) {
+            scrollView.setVisibility(View.VISIBLE);
+            buttonsView.setVisibility(View.VISIBLE);
             stepDescription.setText(stepEntity.getDescription());
             if (stepEntity.getId() != stepListCurrent.get(stepListCurrent.size() - 1).getId()) {
                 nextFAB.setVisibility(View.VISIBLE);
@@ -207,17 +214,11 @@ public class StepFragment extends Fragment implements View.OnClickListener {
                     DefaultHttpDataSourceFactory(userAgent)).createMediaSource(mediaUri);
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
-            if(getResources().getBoolean(R.bool.isLandscape) || !getResources().getBoolean(R.bool.isTablet)){
-                playerView.setResizeMode(AspectRatioFrameLayout.RESIZE_MODE_FILL);
-                player.setVideoScalingMode(C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING);
-
+            if(playBackPosition != -1) {
+                player.seekTo(playBackPosition);
+                playBackPosition = -1;
+                player.setPlayWhenReady(true);
             }
-
-        }else if(playBackPosition != -1){
-            player.seekTo(playBackPosition);
-            playBackPosition = -1;
-            player.setPlayWhenReady(true);
-
         }
     }
 
@@ -256,6 +257,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
         if(v.getId() == R.id.next_fab){
             if(player != null) releasePlayer();
             stepId++;
+            mViewModel.setStepId(stepId);
             mViewModel.setStep(stepId);
             StepEntity newStep = null;
             for(int i=0;i<stepListCurrent.size();i++){
@@ -269,6 +271,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
            if(player != null) releasePlayer();
             stepId--;
             StepEntity newStep = null;
+            mViewModel.setStepId(stepId);
             mViewModel.setStep(stepId);
             for(int i=0;i<stepListCurrent.size();i++){
                 if(stepListCurrent.get(i).getId() == stepId){
@@ -285,11 +288,11 @@ public class StepFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putInt("CurrentStepId", mViewModel.getStepId().getValue());
+        outState.putInt("CurrentStepId", mViewModel.getStepIdInt());
         outState.putInt("CurrentRecipeId", recipeId);
         outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
 
-        if (player != null) {
+        if(player != null) {
             outState.putLong("PlayerPosition", player.getCurrentPosition());
             outState.putBoolean("PlayWhenReady", playWhenReady);
         }

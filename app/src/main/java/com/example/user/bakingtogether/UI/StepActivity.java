@@ -28,24 +28,27 @@ public class StepActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getResources().getBoolean(R.bool.isLandscape) && !getResources().getBoolean(R.bool.isTablet)) {
+            requestWindowFeature(Window.FEATURE_NO_TITLE);
+            this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        setContentView(R.layout.activity_step);
-        Intent intent = getIntent();
-        if(intent != null){
-            stepsList = intent.getParcelableArrayListExtra("StepsList");
-            recipeId = intent.getIntExtra("CurrentRecipe", DEFAULT_VALUE);
-            stepId = intent.getIntExtra("CurrentStep",DEFAULT_VALUE);
         }
+        setContentView(R.layout.activity_step);
+        if (getResources().getBoolean(R.bool.isLandscape) && !getResources().getBoolean(R.bool.isTablet)) {
+            getSupportActionBar().hide();
+        }
+       // setContentView(R.layout.activity_step);
+
+        if(savedInstanceState == null){
         StepFragment stepFragment = new StepFragment();
         Bundle bundle = new Bundle();
-        if(recipeId != DEFAULT_VALUE && stepId != null && stepsList != null) {
-            bundle.putParcelableArrayList("List", stepsList);
-            bundle.putInt("StepId", stepId);
-            bundle.putInt("RecipeId", recipeId);
+            bundle.putParcelableArrayList("List", getIntent().getParcelableArrayListExtra("StepsList"));
+            bundle.putInt("StepId", getIntent().getIntExtra("CurrentStep",DEFAULT_VALUE));
+            bundle.putInt("RecipeId", getIntent().getIntExtra("CurrentRecipe", DEFAULT_VALUE));
             stepFragment.setArguments(bundle);
             FragmentManager fragmentManager = getSupportFragmentManager();
             fragmentManager.beginTransaction()
-                    .replace(R.id.step_container, stepFragment)
+                    .add(R.id.step_container, stepFragment)
                     .commit();
         }
     }
