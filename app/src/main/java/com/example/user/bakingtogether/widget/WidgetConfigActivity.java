@@ -1,17 +1,14 @@
 package com.example.user.bakingtogether.widget;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.appwidget.AppWidgetManager;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Parcelable;
-import android.preference.PreferenceManager;
-import android.renderscript.Sampler;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -20,9 +17,7 @@ import android.widget.Spinner;
 
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
-import com.example.user.bakingtogether.DB.IngredientEntity;
 import com.example.user.bakingtogether.DB.RecipeDetails;
-import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.TheRepository;
 import com.example.user.bakingtogether.ViewModel.MainActivityViewModel;
@@ -86,8 +81,7 @@ public class WidgetConfigActivity extends AppCompatActivity implements View.OnCl
         viewModel.getWidgetRecipeList().observe(this,recipesList->{
             if(recipesList!=null && recipesList.size() != 0){
                 recipesNames = new ArrayList<>();
-                recipeDetails = new ArrayList<>();
-                recipeDetails.addAll(recipesList);
+                recipesNames.add(0,getString(R.string.appwidget_text));
                 for(int i=0; i< recipesList.size(); i++){
                     recipesNames.add(recipesList.get(i).getRecipe().getName());
 
@@ -99,7 +93,7 @@ public class WidgetConfigActivity extends AppCompatActivity implements View.OnCl
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
                 // attaching data adapter to spinner
-                spinner.setAdapter(adapter);
+               spinner.setAdapter(adapter);
                 spinner.setOnItemSelectedListener(WidgetConfigActivity.this);
                 addWidgetButton.setOnClickListener(WidgetConfigActivity.this);
 
@@ -112,7 +106,11 @@ public class WidgetConfigActivity extends AppCompatActivity implements View.OnCl
     @SuppressLint("NewApi")
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        selectedRecipe = recipesNames.get(spinner.getSelectedItemPosition());
+       if(position == 0) {
+           spinner.setPrompt(recipesNames.get(spinner.getSelectedItemPosition()));
+       }else {
+           selectedRecipe = recipesNames.get(spinner.getSelectedItemPosition());
+       }
 
     }
 

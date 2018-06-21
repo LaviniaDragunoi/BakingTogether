@@ -6,6 +6,7 @@ import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Transaction;
+import android.support.annotation.VisibleForTesting;
 
 import java.util.List;
 
@@ -64,4 +65,8 @@ public abstract class RecipeDao {
     public abstract LiveData<StepEntity> getStepByStepId(int id);
 
 
+    //for testing
+    @VisibleForTesting
+    @Query("SELECT * FROM recipes WHERE name = :name")
+    public abstract RecipeEntity findRecipeByName(String name);
 }

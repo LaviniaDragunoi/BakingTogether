@@ -2,32 +2,18 @@ package com.example.user.bakingtogether.UI.ObjectList;
 
 
 import android.annotation.SuppressLint;
-import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Intent;
-import android.content.res.Configuration;
-import android.media.session.PlaybackState;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.media.session.PlaybackStateCompat;
 import android.support.v4.widget.NestedScrollView;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -40,27 +26,20 @@ import com.example.user.bakingtogether.TheRepository;
 import com.example.user.bakingtogether.UI.StepActivity;
 import com.example.user.bakingtogether.ViewModel.StepActivityViewModel;
 import com.example.user.bakingtogether.ViewModel.StepViewModelFactory;
-import com.example.user.bakingtogether.adapter.ListsAdapter;
 import com.example.user.bakingtogether.data.ApiUtils;
 import com.example.user.bakingtogether.data.RecipeApiInterface;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.hls.playlist.HlsMasterPlaylist;
-import com.google.android.exoplayer2.source.hls.playlist.HlsPlaylistTracker;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import butterknife.BindView;
@@ -91,8 +70,8 @@ public class StepFragment extends Fragment implements View.OnClickListener {
 
     private StepEntity currentStep;
     public SimpleExoPlayer player;
-    public boolean playWhenReady;
-    public long playBackPosition;
+    public boolean playWhenReady = true;
+    public long playBackPosition = -1;
     public int currentWindow;
     private StepActivityViewModel mViewModel;
     private StepViewModelFactory mStepFactory;
@@ -119,6 +98,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
             stepId = savedInstanceState.getInt("CurrentStepId", DEFAULT_VALUE);
             playBackPosition = savedInstanceState.getLong("PlayerPosition");
             playWhenReady = savedInstanceState.getBoolean("PlayWhenReady");
+            currentWindow = savedInstanceState.getInt("CurrentWindow");
 
         } else{
             Bundle bundle = getArguments();
@@ -214,25 +194,14 @@ public class StepFragment extends Fragment implements View.OnClickListener {
                     DefaultHttpDataSourceFactory(userAgent)).createMediaSource(mediaUri);
             player.prepare(mediaSource);
             player.setPlayWhenReady(true);
-            if(playBackPosition != -1) {
-                player.seekTo(playBackPosition);
-                playBackPosition = -1;
-                player.setPlayWhenReady(true);
-            }
+
         }
-    }
+            if(playBackPosition != -1) {
+                player.seekTo(currentWindow, playBackPosition);
+                player.setPlayWhenReady(playWhenReady);
+                playBackPosition = -1;
 
-    @Override
-    public void onStart() {
-        super.onStart();
 
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (player != null) {
-            releasePlayer();
         }
     }
 
@@ -247,6 +216,7 @@ public class StepFragment extends Fragment implements View.OnClickListener {
         super.onStop();
         if (player != null) {
             playBackPosition = player.getCurrentPosition();
+            currentWindow = player.getCurrentWindowIndex();
             releasePlayer();
         }
     }
@@ -291,11 +261,12 @@ public class StepFragment extends Fragment implements View.OnClickListener {
         outState.putInt("CurrentStepId", mViewModel.getStepIdInt());
         outState.putInt("CurrentRecipeId", recipeId);
         outState.putParcelableArrayList("ListOfSteps", stepListCurrent);
+if (player != null) {
+    outState.putLong("PlayerPosition", player.getCurrentPosition());
+    outState.putInt("CurrentWindow", player.getCurrentWindowIndex());
+    outState.putBoolean("PlayWhenReady", playWhenReady);
+}
 
-        if(player != null) {
-            outState.putLong("PlayerPosition", player.getCurrentPosition());
-            outState.putBoolean("PlayWhenReady", playWhenReady);
-        }
     }
 
 

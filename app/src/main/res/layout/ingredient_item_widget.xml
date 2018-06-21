@@ -5,21 +5,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="horizontal">
 
-    <CheckBox
-        android:id="@+id/check_box"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/colorPrimary"/>
-
     <TextView
         android:id="@+id/widget_item"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="8dp"
+        android:layout_margin="8dp"
         tools:text="2.00 measurement ingredient"
         android:textSize="14sp"
-        android:textColor="@color/colorPrimary"/>
+        android:textColor="@color/singleColor"/>
 
 </LinearLayout>

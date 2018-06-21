@@ -31,7 +31,7 @@ public class BakingWidgetProvider extends AppWidgetProvider {
      */
     private static RemoteViews setRemoteAdapter(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
-      //   views.setTextViewText(R.id.recipe_name_widget, recipeName );
+
         views.setRemoteAdapter(R.id.ingredients_list_widget, new Intent(context, WidgetService.class));
 
 return views;
