@@ -14,6 +14,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.user.bakingtogether.AppExecutors;
 import com.example.user.bakingtogether.DB.AppRoomDatabase;
@@ -115,19 +116,23 @@ public class WidgetConfigActivity extends AppCompatActivity implements View.OnCl
     }
 
     private void addWidget(Context context, int recipeId) {
-        SharedPreferences sharedPreferences =  PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putInt("RecipeIdSh", recipeId);
-        editor.apply();
+        if(spinner.getSelectedItemPosition() == 0){
+            Toast.makeText(this,"You have to choose a recipe", Toast.LENGTH_SHORT).show();
+        }else {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putInt("RecipeIdSh", recipeId);
+            editor.apply();
 
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        updateAppWidget(context, appWidgetManager, mAppWidgetId, recipeId);
+            AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+            updateAppWidget(context, appWidgetManager, mAppWidgetId, recipeId);
 
-        // Pass back the original appWidgetId
-        Intent resultValue = new Intent();
-        resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
-        setResult(RESULT_OK, resultValue);
-        finish();
+            // Pass back the original appWidgetId
+            Intent resultValue = new Intent();
+            resultValue.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, mAppWidgetId);
+            setResult(RESULT_OK, resultValue);
+            finish();
+        }
     }
 
 

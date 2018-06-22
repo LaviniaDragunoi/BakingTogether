@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.user.bakingtogether">
 
+    <!--permission for internet connection-->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,6 +13,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <!--MainActivity declaration-->
         <activity android:name=".UI.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,6 +22,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--DetailsActivity declaration, on back button pressed the parent_activity is MainActivity -->
         <activity
             android:name=".UI.DetailsActivity"
             android:parentActivityName=".UI.MainActivity"
@@ -27,6 +32,8 @@
                 android:name="android:suport.PARENT_ACTIVITY"
                 android:value=".UI.MainActivity" />
         </activity>
+
+        <!--StepActivity declaration, on back button pressed the parent_activity is DetailsActivity-->
         <activity
             android:name=".UI.StepActivity"
             android:parentActivityName=".UI.DetailsActivity"
@@ -36,10 +43,12 @@
                 android:value=".UI.DetailsActivity" />
         </activity>
 
+        <!--Declaration of the WidgetService with permission for bind for remoteviews-->
         <service
             android:name=".widget.WidgetService"
             android:permission="android.permission.BIND_REMOTEVIEWS" />
 
+        <!--Widget created, and the XML resource declared-->
         <receiver android:name=".widget.BakingWidgetProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
@@ -50,9 +59,10 @@
                 android:resource="@xml/baking_widget_provider_info" />
         </receiver>
 
+        <!--ConfigurationActivity that is used to customise the widget-->
         <activity android:name=".widget.WidgetConfigActivity">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
             </intent-filter>
         </activity>
     </application>

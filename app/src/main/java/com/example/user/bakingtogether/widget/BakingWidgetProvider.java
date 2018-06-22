@@ -17,25 +17,22 @@ public class BakingWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
              int appWidgetId, int recipeId) {
-// Construct the RemoteViews object
+
+        // Construct the RemoteViews object
         RemoteViews views = setRemoteAdapter(context);
-
-
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
     /**
      * Sets the remote adapter used to fill in the grid items
-     *
      */
     private static RemoteViews setRemoteAdapter(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.baking_widget_provider);
-
         views.setRemoteAdapter(R.id.ingredients_list_widget, new Intent(context, WidgetService.class));
-
-return views;
+        return views;
     }
+
 
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -57,7 +54,6 @@ return views;
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
-
 
 }
 
