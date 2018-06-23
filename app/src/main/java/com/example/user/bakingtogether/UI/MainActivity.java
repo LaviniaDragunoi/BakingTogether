@@ -1,13 +1,11 @@
 package com.example.user.bakingtogether.UI;
 
 import android.arch.persistence.db.SupportSQLiteDatabase;
+import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 
 import com.example.user.bakingtogether.BuildConfig;
-import com.example.user.bakingtogether.DB.AppRoomDatabase;
-import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.recipes.RecipesFragment;
 
@@ -27,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         fragmentManager.beginTransaction()
                 .replace(R.id.recipes_list, recipesFragment)
                 .commit();
-        //Method called for debugging DB
+        //Method called for debugging Room DB
         setInMemoryRoomDatabases();
 
     }
