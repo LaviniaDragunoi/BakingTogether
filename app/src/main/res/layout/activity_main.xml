@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--the layout that will be populated with main
+recipe list from the fragment_recipe_main layout-->
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/MatchMatchStyle"
     tools:context=".UI.MainActivity">
 
-<include
-    android:id="@+id/recipes_list"
-    layout="@layout/fragment_recipes_main"/>
+    <include
+        android:id="@+id/recipes_list"
+        layout="@layout/fragment_recipes_main" />
+
 </FrameLayout>

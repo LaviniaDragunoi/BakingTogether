@@ -1,27 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--layout that will help to configure the widget with the recipe selected from the spinner-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    style="@style/MatchMatchStyle"
     tools:context=".widget.WidgetConfigActivity">
+
     <Spinner
         android:id="@+id/recipe_spinner"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="20dp"
-        android:layout_marginTop="20dp"/>
+        style="@style/WrapWrapStyle"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="@dimen/widget_spinner_margins"
+        android:layout_marginTop="@dimen/widget_spinner_margins" />
 
     <Button
         android:id="@+id/add_widget_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="20dp"
-        android:textColor="@color/colorAccent"
-        android:text="@string/add_widget"
-        android:textSize="20sp"
+        style="@style/WMatchHWrapStyle"
+        android:layout_below="@+id/recipe_spinner"
+        android:layout_margin="@dimen/widget_spinner_margins"
         android:background="@color/colorPrimary"
-        android:layout_below="@+id/recipe_spinner"/>
+        android:text="@string/add_widget"
+        android:textColor="@color/colorAccent"
+        android:textSize="@dimen/text_title_size" />
 
 </RelativeLayout>

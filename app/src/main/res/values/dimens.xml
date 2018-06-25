@@ -6,5 +6,19 @@ Refer to App Widget Documentation for margin information
 http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     -->
     <dimen name="widget_margin">8dp</dimen>
-
+    <dimen name="text_title_size">20sp</dimen>
+    <dimen name="view_line_height">2dp</dimen>
+    <dimen name="ten_dp_margin">10dp</dimen>
+    <dimen name="zero_dp">0dp</dimen>
+    <dimen name="widget_spinner_margins">20dp</dimen>
+    <dimen name="divider_height">1dp</dimen>
+    <dimen name="four_dp">4dp</dimen>
+    <dimen name="exo_player_text">14sp</dimen>
+    <dimen name="exo_player_height">32dp</dimen>
+    <dimen name="eight_dp">8dp</dimen>
+    <dimen name="padding">16dp</dimen>
+    <dimen name="image_dim">200dp</dimen>
+    <dimen name="big_dim_image">300dp</dimen>
+    <dimen name="step_text_size">16sp</dimen>
+    <dimen name="xml_dimen">40dp</dimen>
 </resources>

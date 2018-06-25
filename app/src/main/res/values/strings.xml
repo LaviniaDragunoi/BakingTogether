@@ -4,4 +4,7 @@
     <string name="appwidget_text">Choose your recipe</string>
     <string name="add_widget">Add widget</string>
     <string name="first_line_choose_recipe">You have to choose a recipe</string>
+    <string name="ingredients_title">Ingredients:</string>
+    <string name="steps_title">Steps:</string>
+    <string name="error_loading_mess">No baking today!</string>
 </resources>

@@ -1,22 +1,19 @@
+<!--the widget layout that will display the ingredients list-->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
+    style="@style/MatchMatchStyle"
     android:padding="@dimen/widget_margin">
 
     <ImageView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/cacke"
-        android:alpha="0.3"/>
+        style="@style/MatchMatchStyle"
+        android:alpha="0.3"
+        android:background="@drawable/cacke" />
 
     <ListView
         android:id="@+id/ingredients_list_widget"
-        android:layout_margin="10dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusableInTouchMode="true"
+        style="@style/WMatchHWrapStyle"
+        android:layout_margin="@dimen/ten_dp_margin"
         android:divider="@color/colorPrimaryDark"
-        android:dividerHeight="1dp"/>
+        android:dividerHeight="@dimen/divider_height"
+        android:focusableInTouchMode="true" />
 
 </RelativeLayout>

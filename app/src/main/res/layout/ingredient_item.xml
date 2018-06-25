@@ -1,40 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:tools="http://schemas.android.com/tools"
+    style="@style/WMatchHWrapStyle"
     android:orientation="horizontal">
 
-        <CheckBox
-            android:id="@+id/check_box"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <TextView
-            android:id="@+id/quantity"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            tools:text="2.00"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <TextView
-            android:id="@+id/measurement"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            tools:text="measurement"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
-        <TextView
-            android:id="@+id/ingredient"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            tools:text="ingredient"
-            android:textSize="14sp"
-            android:textColor="@color/colorPrimary"/>
+    <CheckBox
+        android:id="@+id/check_box"
+        style="@style/WrapWrapStyle"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/exo_player_text" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/quantity"
+        style="@style/WrapWrapStyle"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/exo_player_text"
+        tools:text="2.00" />
+
+    <TextView
+        android:id="@+id/measurement"
+        style="@style/WrapWrapStyle"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/exo_player_text"
+        tools:text="measurement" />
+
+    <TextView
+        android:id="@+id/ingredient"
+        style="@style/WrapWrapStyle"
+        android:layout_marginEnd="@dimen/eight_dp"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/exo_player_text"
+        tools:text="ingredient" />
+
+</LinearLayout>

@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:id="@+id/step_container"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<!--the layout that will be populated with setp_details_fragment layout-->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:id="@+id/step_container"
+    style="@style/MatchMatchStyle"
     tools:context=".UI.StepActivity">
 
 </RelativeLayout>
