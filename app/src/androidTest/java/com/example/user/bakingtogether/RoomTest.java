@@ -25,6 +25,7 @@ public class RoomTest {
     private RecipeDao recipeDao;
     private AppRoomDatabase mDb;
     private String testText = "NewTestRecipe";
+    private static final String RECIPE_NAME = "Nutella Pie";
 
 
     @Before
@@ -46,8 +47,10 @@ public class RoomTest {
         recipeDao.insertRecipe(recipeEntity);
        RecipeEntity recipe = recipeDao.findRecipeByName(testText);
        assertThat(recipe.getName(), equalTo(recipeEntity.getName()));
-
     }
 
-
+    @Test
+    public void readFromDao(){
+        recipeDao.findRecipeByName(RECIPE_NAME);
+    }
 }

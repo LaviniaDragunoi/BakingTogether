@@ -1,7 +1,4 @@
 package com.example.user.bakingtogether.data;
-/**
- * Created by Lavinia Dragunoi on 7-05-2018
- */
 
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -11,9 +8,23 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
+/**
+ * Created by Lavinia Dragunoi
+ * The Recipes object that will be retrieve from the API
+ */
+public class RecipeResponse implements Parcelable {
 
-public class RecipeResponse implements Parcelable{
+    public static final Creator<RecipeResponse> CREATOR = new Creator<RecipeResponse>() {
+        @Override
+        public RecipeResponse createFromParcel(Parcel in) {
+            return new RecipeResponse(in);
+        }
 
+        @Override
+        public RecipeResponse[] newArray(int size) {
+            return new RecipeResponse[size];
+        }
+    };
     @SerializedName("id")
     @Expose
     private Integer id;
@@ -47,18 +58,6 @@ public class RecipeResponse implements Parcelable{
         }
         image = in.readString();
     }
-
-    public static final Creator<RecipeResponse> CREATOR = new Creator<RecipeResponse>() {
-        @Override
-        public RecipeResponse createFromParcel(Parcel in) {
-            return new RecipeResponse(in);
-        }
-
-        @Override
-        public RecipeResponse[] newArray(int size) {
-            return new RecipeResponse[size];
-        }
-    };
 
     public Integer getId() {
         return id;
@@ -107,7 +106,6 @@ public class RecipeResponse implements Parcelable{
     public void setImage(String image) {
         this.image = image;
     }
-
 
     @Override
     public int describeContents() {

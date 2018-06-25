@@ -13,12 +13,27 @@ import com.google.gson.annotations.SerializedName;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
+/**
+ * The Ingredient entity that is stored in the Room database , has recipeId as indices that can help to
+ * identify each entity by it's parent entity (RecipeEntity.class called id)
+ */
 @Entity(indices = {@Index("id"), @Index("recipeId")},
         foreignKeys = @ForeignKey(entity = RecipeEntity.class,
                 parentColumns = "id",
                 childColumns = "recipeId",
                 onDelete = CASCADE))
 public class IngredientEntity implements Parcelable {
+    public static final Creator<IngredientEntity> CREATOR = new Creator<IngredientEntity>() {
+        @Override
+        public IngredientEntity createFromParcel(Parcel in) {
+            return new IngredientEntity(in);
+        }
+
+        @Override
+        public IngredientEntity[] newArray(int size) {
+            return new IngredientEntity[size];
+        }
+    };
     @PrimaryKey(autoGenerate = true)
     @Expose(deserialize = false, serialize = false)
     private int id;
@@ -38,13 +53,14 @@ public class IngredientEntity implements Parcelable {
     @Expose
     private String ingredient;
 
-    public IngredientEntity(int recipeId, double quantity, String measure, String ingredient){
+    public IngredientEntity(int recipeId, double quantity, String measure, String ingredient) {
         this.recipeId = recipeId;
         this.quantity = quantity;
         this.measure = measure;
         this.ingredient = ingredient;
 
     }
+
     @Ignore
     public IngredientEntity(double quantity, String measure, String ingredient) {
         this.quantity = quantity;
@@ -67,18 +83,6 @@ public class IngredientEntity implements Parcelable {
         measure = in.readString();
         ingredient = in.readString();
     }
-
-    public static final Creator<IngredientEntity> CREATOR = new Creator<IngredientEntity>() {
-        @Override
-        public IngredientEntity createFromParcel(Parcel in) {
-            return new IngredientEntity(in);
-        }
-
-        @Override
-        public IngredientEntity[] newArray(int size) {
-            return new IngredientEntity[size];
-        }
-    };
 
     public int getId() {
         return id;

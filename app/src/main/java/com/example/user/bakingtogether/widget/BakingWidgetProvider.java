@@ -16,7 +16,7 @@ import com.example.user.bakingtogether.R;
 public class BakingWidgetProvider extends AppWidgetProvider {
 
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
-             int appWidgetId, int recipeId) {
+                                int appWidgetId, int recipeId) {
 
         // Construct the RemoteViews object
         RemoteViews views = setRemoteAdapter(context);
@@ -33,15 +33,14 @@ public class BakingWidgetProvider extends AppWidgetProvider {
         return views;
     }
 
-
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 
         for (int appWidgetId : appWidgetIds) {
-            WidgetConfigActivity.deleteRecipeIdPref(context,appWidgetId);
+            WidgetConfigActivity.deleteRecipeIdPref(context, appWidgetId);
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
             int recipeId = sp.getInt("RecipeIdSh", -1);
-            updateAppWidget(context, appWidgetManager,appWidgetId, recipeId);
+            updateAppWidget(context, appWidgetManager, appWidgetId, recipeId);
         }
     }
 
@@ -54,6 +53,5 @@ public class BakingWidgetProvider extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
-
 }
 

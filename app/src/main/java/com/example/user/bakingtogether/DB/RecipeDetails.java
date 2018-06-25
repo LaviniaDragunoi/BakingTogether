@@ -6,15 +6,20 @@ import android.arch.persistence.room.Relation;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * RecipeDetails object contains the list of ingredients and steps and is connected with the entity
+ * of the Room database
+ */
 public class RecipeDetails {
     @Embedded
     private RecipeEntity recipe;
     @Relation(parentColumn = "id",
-              entityColumn = "recipeId", entity = IngredientEntity.class)
+            entityColumn = "recipeId", entity = IngredientEntity.class)
+
     private List<IngredientEntity> ingredients = new ArrayList<>();
 
     @Relation(parentColumn = "id",
-               entityColumn = "recipeId", entity = StepEntity.class)
+            entityColumn = "recipeId", entity = StepEntity.class)
     private List<StepEntity> steps = new ArrayList<>();
 
     public RecipeEntity getRecipe() {

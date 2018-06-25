@@ -11,22 +11,23 @@ import android.support.annotation.VisibleForTesting;
 import java.util.List;
 
 /**
- * Created by Lavinia Dragunoi on 14-05-2018
+ * Created by Lavinia Dragunoi
+ * Abstract class that contains methods to access the database
  */
 @Dao
 public abstract class RecipeDao {
+
     @Query("DELETE FROM recipes")
     public abstract void deleteAll();
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     public abstract void insertRecipe(RecipeEntity recipeEntity);
 
-   @Insert(onConflict = OnConflictStrategy.REPLACE)
-   public abstract void insertIngredients(IngredientEntity ingredientEntity);
-
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    public abstract void insertIngredients(IngredientEntity ingredientEntity);
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-   public abstract void insertSteps(StepEntity stepEntity);
+    public abstract void insertSteps(StepEntity stepEntity);
 
     @Query("SELECT * FROM recipes")
     public abstract LiveData<List<RecipeEntity>> loadAllRecipes();
@@ -41,9 +42,6 @@ public abstract class RecipeDao {
 
     @Query("SELECT * FROM recipes WHERE id = :id")
     @Transaction
-    public abstract RecipeDetails getRecipeByIdForWidget(int id);
-    @Query("SELECT * FROM recipes WHERE id = :id")
-    @Transaction
     public abstract RecipeEntity getRecipeByIdForDetailsActiv(int id);
 
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
@@ -52,18 +50,11 @@ public abstract class RecipeDao {
     @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
     public abstract List<IngredientEntity> getIngredientsListByRecipeId(int id);
 
- @Query("SELECT * FROM IngredientEntity WHERE recipeId = :id")
- public abstract IngredientEntity getIngredientByRecipeId(int id);
-
     @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
     public abstract LiveData<List<StepEntity>> getStepsByRecipeId(int id);
 
-    @Query("SELECT * FROM StepEntity WHERE recipeId = :id")
-    public abstract List<StepEntity> getStepsListByRecipeId(int id);
-
     @Query("SELECT * FROM StepEntity WHERE id = :id")
     public abstract LiveData<StepEntity> getStepByStepId(int id);
-
 
     //for testing
     @VisibleForTesting

@@ -13,53 +13,62 @@ import com.google.gson.annotations.SerializedName;
 
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
+/**
+ * The Steps entity that is stored in the Room database , has recipeId as indices that can help to
+ * identify each entity by it's parent entity (RecipeEntity.class called id)
+ */
 @Entity(indices = {@Index("id"), @Index("recipeId")},
-            foreignKeys = @ForeignKey(entity = RecipeEntity.class,
-                    parentColumns = "id",
-                    childColumns = "recipeId",
-                    onDelete = CASCADE))
-    public class StepEntity implements Parcelable{
-        @PrimaryKey(autoGenerate = true)
-        @Expose(deserialize = false, serialize = false)
-        private int id;
+        foreignKeys = @ForeignKey(entity = RecipeEntity.class,
+                parentColumns = "id",
+                childColumns = "recipeId",
+                onDelete = CASCADE))
+public class StepEntity implements Parcelable {
+    public static final Creator<StepEntity> CREATOR = new Creator<StepEntity>() {
+        @Override
+        public StepEntity createFromParcel(Parcel in) {
+            return new StepEntity(in);
+        }
 
-        @Expose(deserialize = false, serialize = false)
-        private Integer recipeId;
-
-        @SerializedName("shortDescription")
-        @Expose
-        private String shortDescription;
-
-        @SerializedName("description")
-        @Expose
-        private String description;
-
-        @SerializedName("videoURL")
-        @Expose
-        private String videoURL;
+        @Override
+        public StepEntity[] newArray(int size) {
+            return new StepEntity[size];
+        }
+    };
+    @PrimaryKey(autoGenerate = true)
+    @Expose(deserialize = false, serialize = false)
+    private int id;
+    @Expose(deserialize = false, serialize = false)
+    private Integer recipeId;
+    @SerializedName("shortDescription")
+    @Expose
+    private String shortDescription;
+    @SerializedName("description")
+    @Expose
+    private String description;
+    @SerializedName("videoURL")
+    @Expose
+    private String videoURL;
     @SerializedName("thumbnailURL")
     @Expose
     private String thumbnailURL;
 
-        public StepEntity(int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL){
-            this.recipeId = recipeId;
-            this.shortDescription = shortDescription;
-            this.description = description;
-            this.videoURL = videoURL;
-            this.thumbnailURL = thumbnailURL;
+    public StepEntity(int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL) {
+        this.recipeId = recipeId;
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
+    }
 
-        }
-
-        @Ignore
-        public StepEntity(int id,int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL){
-            this.recipeId = recipeId;
-            this.id = id;
-            this.shortDescription = shortDescription;
-            this.description = description;
-            this.videoURL = videoURL;
-            this.thumbnailURL = thumbnailURL;
-
-        }
+    @Ignore
+    public StepEntity(int id, int recipeId, String shortDescription, String description, String videoURL, String thumbnailURL) {
+        this.recipeId = recipeId;
+        this.id = id;
+        this.shortDescription = shortDescription;
+        this.description = description;
+        this.videoURL = videoURL;
+        this.thumbnailURL = thumbnailURL;
+    }
 
     protected StepEntity(Parcel in) {
         id = in.readInt();
@@ -73,18 +82,6 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
         videoURL = in.readString();
         thumbnailURL = in.readString();
     }
-
-    public static final Creator<StepEntity> CREATOR = new Creator<StepEntity>() {
-        @Override
-        public StepEntity createFromParcel(Parcel in) {
-            return new StepEntity(in);
-        }
-
-        @Override
-        public StepEntity[] newArray(int size) {
-            return new StepEntity[size];
-        }
-    };
 
     public int getId() {
         return id;

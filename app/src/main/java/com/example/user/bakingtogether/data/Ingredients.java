@@ -1,11 +1,11 @@
 package com.example.user.bakingtogether.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * The Ingredients object that will be retrieve from the API
+ */
 public class Ingredients {
 
     @SerializedName("quantity")
@@ -19,8 +19,6 @@ public class Ingredients {
     @SerializedName("ingredient")
     @Expose
     private String ingredient;
-
-
 
     public Double getQuantity() {
         return quantity;

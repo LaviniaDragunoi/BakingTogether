@@ -1,24 +1,28 @@
 package com.example.user.bakingtogether.data;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Step{
+/**
+ * The Steps object that will be retrieve from the API
+ */
+public class Step {
     @SerializedName("id")
     @Expose
     private Integer id;
+
     @SerializedName("shortDescription")
     @Expose
     private String shortDescription;
+
     @SerializedName("description")
     @Expose
     private String description;
+
     @SerializedName("videoURL")
     @Expose
     private String videoURL;
+
     @SerializedName("thumbnailURL")
     @Expose
     private String thumbnailURL;
@@ -62,6 +66,5 @@ public class Step{
     public void setThumbnailURL(String thumbnailURL) {
         this.thumbnailURL = thumbnailURL;
     }
-
 
 }

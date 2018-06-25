@@ -1,6 +1,5 @@
-package com.example.user.bakingtogether.UI.recipes;
+package com.example.user.bakingtogether.adapter;
 
-import android.arch.lifecycle.LiveData;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -10,61 +9,55 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 import com.example.user.bakingtogether.DB.RecipeEntity;
 import com.example.user.bakingtogether.R;
 import com.example.user.bakingtogether.UI.DetailsActivity;
-import com.example.user.bakingtogether.data.RecipeResponse;
 import com.squareup.picasso.Picasso;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import static java.lang.String.valueOf;
+/**
+ * Will set up the recyclerView for the recipes list that will populate the RecipesFragment
+ */
+public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder> {
 
-
-public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesViewHolder>{
-
+    public static final String EXTRA_RECIPE = "CurrentRecipe";
+    public static final int DEFAULT_VALUE = -1;
     private List<RecipeEntity> recipesList;
     private Context context;
 
-    public static final String EXTRA_RECIPE = "CurrentRecipe" ;
-    public static final int DEFAULT_VALUE = -1;
-
-    public RecipesAdapter (Context context, List<RecipeEntity> recipeList){
+    public RecipesAdapter(Context context, List<RecipeEntity> recipeList) {
         this.context = context;
         this.recipesList = recipeList;
-
-
     }
 
     @NonNull
     @Override
     public RecipesViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View itemView = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.recipes_list_item,parent, false);
+                .inflate(R.layout.recipes_list_item, parent, false);
         return new RecipesViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull final RecipesViewHolder holder, int position) {
         final RecipeEntity recipeEntity = recipesList.get(position);
-
         TextView recipeNameTextView = holder.recipeName;
         String name = recipeEntity.getName();
         recipeNameTextView.setText(name);
         ImageView recipeImageView = holder.recipeImage;
         String imageString = recipeEntity.getImage();
-        if( imageString != null && !imageString.isEmpty()) {
+        //if the image String from the API is empty, it will be used the app's logo
+        if (imageString != null && !imageString.isEmpty()) {
             Picasso.get().load(Uri.parse(imageString)).into(recipeImageView);
-
-        }else Picasso.get().load(R.drawable.ic_logo).into(recipeImageView);
-
+        } else Picasso.get().load(R.drawable.ic_logo).into(recipeImageView);
+        //on the click on an item of the adapter it will be send intent with the recipeEntity and
+        // the DetailsActivity.class will start it's activity
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,20 +70,19 @@ public class RecipesAdapter extends RecyclerView.Adapter<RecipesAdapter.RecipesV
 
     @Override
     public int getItemCount() {
-        if(recipesList == null) return 0;
+        if (recipesList == null) return 0;
         return recipesList.size();
     }
 
-    public static class RecipesViewHolder extends RecyclerView.ViewHolder{
-        @BindView(R.id.recipe_name) TextView recipeName;
-        @BindView(R.id.recipe_image) ImageView recipeImage;
+    public static class RecipesViewHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.recipe_name)
+        TextView recipeName;
+        @BindView(R.id.recipe_image)
+        ImageView recipeImage;
+
         public RecipesViewHolder(View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-
         }
     }
-
-
-
 }
